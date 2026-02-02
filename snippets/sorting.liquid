@@ -164,6 +164,12 @@
   .sorting-filter__container .facets__label {
     font-size: var(--font-h4--size);
   }
+  
+  @media (max-width: 767px) {
+    .sorting-filter__container .facets__label {
+      font-size: var(--font-h4--size-mobile);
+    }
+  }
 
   .sorting-filter__select-wrapper {
     display: flex;
@@ -323,6 +329,12 @@
     margin-inline-end: var(--margin-2xs);
     font-size: var(--font-paragraph--size);
     color: var(--color-foreground-muted);
+  }
+
+  @media (max-width: 767px) {
+    .facets-mobile-wrapper .sorting-filter .facets__label {
+      font-size: var(--font-paragraph--size-mobile);
+    }
   }
 
   .facets-toggle .sorting-filter__container {

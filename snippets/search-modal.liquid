@@ -12,6 +12,7 @@
 <dialog-component
   id="search-modal"
   class="search-modal"
+  data-type="{{ settings.search_layout }}"
   {{ block.shopify_attributes }}
 >
   <dialog
@@ -155,6 +156,29 @@
       width: var(--modal-width);
       margin-block-start: var(--modal-top-margin);
       overflow: hidden;
+    }
+  }
+
+    @media screen and (min-width: 750px) {
+    .search-modal[data-type="full-width"] .search-modal__content {
+      width: 100vw;
+      max-width: 100vw;
+      margin-block-start: var(--header-group-height);
+      border-radius: 0 !important;
+      box-shadow: 0px 2px 0px rgb(var(--color-shadow-rgb) / var(--opacity-15)) !important;
+      border-top: var(--search-border-width) solid var(--color-border);
+    }
+
+    .search-modal[data-type="full-width"] .search-modal__content::backdrop {
+      top: var(--header-group-height);
+    }
+
+    body.animation-sticky-header .search-modal[data-type="full-width"] .search-modal__content {
+      margin-block-start: calc(var(--header-height) - 1px);
+    }
+
+    body.animation-sticky-header .search-modal[data-type="full-width"] .search-modal__content::backdrop {
+      top: var(--header-height);
     }
   }
 

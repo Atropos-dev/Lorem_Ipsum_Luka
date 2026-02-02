@@ -68,15 +68,15 @@
     # Define breakpoints and base sizes based on page width
     # Breakpoints are the page width setting + margin (where 2 x margin is 80px = 5rem)
     case settings.page_width
-      when 'narrow'
+      when settings.page_width < 90
         assign breakpoint = '95rem'
         assign media_base_size_equal_columns = '45rem'
         assign media_base_size_unequal_columns = '65rem'
-      when 'normal'
+      when settings.page_width < 120
         assign breakpoint = '125rem'
         assign media_base_size_equal_columns = '60rem'
         assign media_base_size_unequal_columns = '95rem'
-      when 'wide'
+      when settings.page_width < 150
         assign breakpoint = '155rem'
         assign media_base_size_equal_columns = '75rem'
         assign media_base_size_unequal_columns = '125rem'

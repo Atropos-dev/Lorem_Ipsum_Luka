@@ -115,7 +115,7 @@
         | external_video_tag: data-video-type: 'vimeo'
       }}
     {% else %}
-      {{ video | video_tag: image_size: '2500x', autoplay: true, loop: video_loop, muted: true, controls: controls }}
+      {% render 'lazy-video', video: video, autoplay: true, loop: video_loop, muted: true, controls: false, loading: loading %}
     {% endif %}
   {% endcapture %}
 {% endif %}

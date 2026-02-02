@@ -71,7 +71,7 @@
   </accordion-custom>
 {% endif %}
 
-{% stylesheet %}
+<style>
   .menu {
     width: 100%;
   }
@@ -80,9 +80,18 @@
     margin-block-start: var(--spacing--size);
   }
 
-  .menu__item + .menu__item {
-    margin-block-start: var(--spacing--size);
-  }
+  {% if block.settings.content_direction == 'column' %}
+    .menu__item + .menu__item {
+      margin-block-start: var(--spacing--size);
+    }
+  {% else %}
+    .menu .details-content ul {
+      display: flex;
+    }
+    .menu__item + .menu__item {
+      margin-inline-start: var(--spacing--size);
+    }
+  {% endif %}
 
   .menu .menu__heading--empty {
     display: none;
@@ -114,6 +123,24 @@
       margin-block-start: var(--spacing--size);
     }
 
+    
+    {% if block.settings.content_direction == 'row' and block.settings.vertical_on_mobile == false %}
+      .menu .details-content ul {
+        display: flex;
+      }
+      .menu__item + .menu__item {
+        margin-inline-start: var(--spacing--size);
+      }
+    {% else %}
+      .menu .details-content ul {
+        display: block;
+      }
+      .menu__item + .menu__item {
+        margin-block-start: var(--spacing--size);
+        margin-inline-start: 0;
+      }
+    {% endif %}
+
     .menu--accordion .menu__details {
       padding-inline: 0;
     }
@@ -131,7 +158,7 @@
   .menu--plus .icon-caret {
     display: none;
   }
-{% endstylesheet %}
+</style>
 
 {% schema %}
 {
@@ -152,6 +179,29 @@
     {
       "type": "header",
       "content": "t:content.appearance"
+    },
+    {
+      "type": "select",
+      "id": "content_direction",
+      "label": "t:settings.direction",
+      "options": [
+        {
+          "value": "column",
+          "label": "t:options.vertical"
+        },
+        {
+          "value": "row",
+          "label": "t:options.horizontal"
+        }
+      ],
+      "default": "column"
+    },
+    {
+      "type": "checkbox",
+      "id": "vertical_on_mobile",
+      "label": "t:settings.vertical_on_mobile",
+      "default": true,
+      "visible_if": "{{ block.settings.content_direction == 'row' }}"
     },
     {
       "type": "range",
@@ -333,6 +383,46 @@
       "step": 1,
       "unit": "px",
       "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding-block-start-mobile",
+      "label": "Top Mobile",
+      "min": -1,
+      "max": 99,
+      "step": 1,
+      "unit": "px",
+      "default": -1
+    },
+    {
+      "type": "range",
+      "id": "padding-block-end-mobile",
+      "label": "Bottom Mobile",
+      "min": -1,
+      "max": 99,
+      "step": 1,
+      "unit": "px",
+      "default": -1
+    },
+    {
+      "type": "range",
+      "id": "padding-inline-start-mobile",
+      "label": "Left Mobile",
+      "min": -1,
+      "max": 99,
+      "step": 1,
+      "unit": "px",
+      "default": -1
+    },
+    {
+      "type": "range",
+      "id": "padding-inline-end-mobile",
+      "label": "Right Mobile",
+      "min": -1,
+      "max": 99,
+      "step": 1,
+      "unit": "px",
+      "default": -1
     }
   ],
   "presets": [

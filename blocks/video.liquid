@@ -9,10 +9,17 @@
    --size-style-aspect-ratio: {% if block_settings.source == 'uploaded' %}{{ block_settings.video.aspect_ratio | default: 'auto' }}{% elsif block_settings.cover_image == blank %}{{ block_settings.aspect_ratio }}{% else %}auto{% endif %};
 {% endcapture %}
 
+{% assign has_mobile_video = false %}
+{% assign video_class = 'spacing-style size-style border-style' %}
+{% if block_settings.source_mobile == 'uploaded' and block_settings.video_mobile != blank or block_settings.source_mobile == 'url' and block_settings.video_url_mobile != blank %}
+  {% assign has_mobile_video = true %}
+  {% assign video_class = 'spacing-style size-style border-style hidden--mobile' %}
+{% endif %}
+
 {% if block_settings.source == 'uploaded' %}
   {% render 'video',
     video: block_settings.video,
-    video_class: 'spacing-style size-style border-style',
+    video_class: video_class,
     video_loop: block_settings.video_loop,
     video_style: video_style,
     video_preview_image: block_settings.video.preview_image,
@@ -23,7 +30,7 @@
   {% render 'video',
     video_from_url: true,
     video: block_settings.video_url.id,
-    video_class: 'spacing-style size-style border-style',
+    video_class: video_class,
     video_type: block_settings.video_url.type,
     video_style: video_style,
     video_alt: block_settings.alt,
@@ -31,6 +38,32 @@
     additional_attributes: block.shopify_attributes,
     section_id: section.id
   %}
+{% endif %}
+
+{% if has_mobile_video %}
+  {% if block_settings.source_mobile == 'uploaded' %}
+    {% render 'video',
+      video: block_settings.video_mobile,
+      video_class: 'spacing-style size-style border-style hidden--desktop',
+      video_loop: block_settings.video_loop,
+      video_style: video_style,
+      video_preview_image: block_settings.video.preview_image,
+      additional_attributes: block.shopify_attributes,
+      section_id: section.id
+    %}
+  {% else %}
+    {% render 'video',
+      video_from_url: true,
+      video: block_settings.video_url_mobile.id,
+      video_class: 'spacing-style size-style border-style hidden--desktop',
+      video_type: block_settings.video_url_mobile.type,
+      video_style: video_style,
+      video_alt: block_settings.alt,
+      video_preview_image: block_settings.cover_image,
+      additional_attributes: block.shopify_attributes,
+      section_id: section.id
+    %}
+  {% endif %}
 {% endif %}
 
 {% stylesheet %}
@@ -69,10 +102,40 @@
     {
       "type": "video_url",
       "id": "video_url",
-      "label": "t:settings.video_external_url",
+      "label": "Url",
       "info": "t:info.video_external",
       "accept": ["youtube", "vimeo"],
       "visible_if": "{{ block.settings.source == 'url' }}"
+    },
+        {
+      "type": "select",
+      "id": "source_mobile",
+      "label": "Mobile source",
+      "options": [
+        {
+          "value": "uploaded",
+          "label": "t:options.video_uploaded"
+        },
+        {
+          "value": "url",
+          "label": "t:options.video_external_url"
+        }
+      ],
+      "default": "uploaded"
+    },
+    {
+      "type": "video",
+      "id": "video_mobile",
+      "label": "Mobile video",
+      "visible_if": "{{ block.settings.source_mobile == 'uploaded' }}"
+    },
+    {
+      "type": "video_url",
+      "id": "video_url_mobile",
+      "label": "Mobile url",
+      "info": "t:info.video_external",
+      "accept": ["youtube", "vimeo"],
+      "visible_if": "{{ block.settings.source_mobile == 'url' }}"
     },
     {
       "type": "checkbox",
@@ -244,6 +307,46 @@
       "step": 1,
       "unit": "px",
       "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding-block-start-mobile",
+      "label": "Top Mobile",
+      "min": -1,
+      "max": 99,
+      "step": 1,
+      "unit": "px",
+      "default": -1
+    },
+    {
+      "type": "range",
+      "id": "padding-block-end-mobile",
+      "label": "Bottom Mobile",
+      "min": -1,
+      "max": 99,
+      "step": 1,
+      "unit": "px",
+      "default": -1
+    },
+    {
+      "type": "range",
+      "id": "padding-inline-start-mobile",
+      "label": "Left Mobile",
+      "min": -1,
+      "max": 99,
+      "step": 1,
+      "unit": "px",
+      "default": -1
+    },
+    {
+      "type": "range",
+      "id": "padding-inline-end-mobile",
+      "label": "Right Mobile",
+      "min": -1,
+      "max": 99,
+      "step": 1,
+      "unit": "px",
+      "default": -1
     }
   ],
   "presets": [

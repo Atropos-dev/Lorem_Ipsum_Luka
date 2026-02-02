@@ -820,6 +820,7 @@
     --variant-picker-swatch-width: 32px;
     --variant-picker-swatch-height: 32px;
     --icon-opacity: 0.5;
+    font-size: var(--font-h4--size-mobile);
 
     @media screen and (min-width: 750px) {
       --variant-picker-swatch-width: 26px;
@@ -846,6 +847,7 @@
   }
 
   .facets--horizontal .facets__summary {
+    font-size: var(--font-paragraph--size-mobile);
     @media screen and (min-width: 750px) {
       font-size: var(--font-paragraph--size);
       justify-content: flex-start;
@@ -1352,6 +1354,46 @@
       "step": 1,
       "unit": "px",
       "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding-block-start-mobile",
+      "label": "Top Mobile",
+      "min": -1,
+      "max": 99,
+      "step": 1,
+      "unit": "px",
+      "default": -1
+    },
+    {
+      "type": "range",
+      "id": "padding-block-end-mobile",
+      "label": "Bottom Mobile",
+      "min": -1,
+      "max": 99,
+      "step": 1,
+      "unit": "px",
+      "default": -1
+    },
+    {
+      "type": "range",
+      "id": "padding-inline-start-mobile",
+      "label": "Left Mobile",
+      "min": -1,
+      "max": 99,
+      "step": 1,
+      "unit": "px",
+      "default": -1
+    },
+    {
+      "type": "range",
+      "id": "padding-inline-end-mobile",
+      "label": "Right Mobile",
+      "min": -1,
+      "max": 99,
+      "step": 1,
+      "unit": "px",
+      "default": -1
     },
     {
       "type": "header",

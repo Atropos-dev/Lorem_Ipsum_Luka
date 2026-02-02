@@ -52,6 +52,12 @@ slot[name='more'] .button {
   text-align: start;
 }
 
+@media (max-width: 767px) {
+  slot[name='more'] .button {
+    font-size: var(--font-paragraph-size-mobile);
+  }
+}
+
 [part='overflow'] {
   display: none;
 }

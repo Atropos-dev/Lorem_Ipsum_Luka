@@ -14,6 +14,8 @@
     --overlay-layer: {{ layer | default: 'var(--layer-flat)' }};
     --overlay-color: {{ settings.overlay_color | default: 'rgb(0 0 0 / var(--opacity-25))' }};
     --overlay-color--end: {{ settings.overlay_color | color_modify: 'alpha', 0 | default: 'rgb(0 0 0 / 0)' }};
+    --overlay-hover-color: {{ settings.overlay_hover_color | default: 'rgb(0 0 0 / var(--opacity-25))' }};
+    --overlay-hover-color--end: {{ settings.overlay_hover_color | color_modify: 'alpha', 0 | default: 'rgb(0 0 0 / 0)' }};
     --overlay-direction: {{ settings.gradient_direction | default: 'to top' }};
     {%- if settings.border_radius %} --overlay-border-radius: {{ settings.border_radius | default: '0' }}px;{% endif -%}
   "
@@ -26,6 +28,7 @@
     z-index: var(--overlay-layer);
     pointer-events: none;
     border-radius: var(--overlay-border-radius, 0);
+    transition: background var(--transition-duration) var(--transition-ease-type) var(--transition-delay);
   }
 
   .overlay--solid {

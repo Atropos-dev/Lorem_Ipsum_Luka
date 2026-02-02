@@ -64,24 +64,7 @@
           | image_tag: height: height, sizes: sizes, widths: widths, class: 'slide__image', loading: loading, fetchpriority: fetchpriority
         }}
       {%- else -%}
-        {%- if block_settings.video_1.preview_image -%}
-
-          {{
-            block_settings.video_1.preview_image
-            | image_url: width: 3840
-            | image_tag:
-              height: height,
-              sizes: sizes,
-              widths: widths,
-              loading: loading,
-              class: 'slide__video-poster',
-              fetchpriority: fetchpriority
-          }}
-        {%- endif -%}
-        {{
-          block_settings.video_1
-          | video_tag: poster: nil, autoplay: true, loop: true, controls: false, muted: true, class: 'slide__video'
-        }}
+         {% render 'lazy-video', video: block_settings.video_1, autoplay: true, loop: true, muted: true, class: 'slide__video', controls: false, loading: loading %}
       {%- endif -%}
     {%- else -%}
       {%- liquid
@@ -470,6 +453,46 @@
       "step": 1,
       "unit": "px",
       "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding-block-start-mobile",
+      "label": "Top Mobile",
+      "min": -1,
+      "max": 99,
+      "step": 1,
+      "unit": "px",
+      "default": -1
+    },
+    {
+      "type": "range",
+      "id": "padding-block-end-mobile",
+      "label": "Bottom Mobile",
+      "min": -1,
+      "max": 99,
+      "step": 1,
+      "unit": "px",
+      "default": -1
+    },
+    {
+      "type": "range",
+      "id": "padding-inline-start-mobile",
+      "label": "Left Mobile",
+      "min": -1,
+      "max": 99,
+      "step": 1,
+      "unit": "px",
+      "default": -1
+    },
+    {
+      "type": "range",
+      "id": "padding-inline-end-mobile",
+      "label": "Right Mobile",
+      "min": -1,
+      "max": 99,
+      "step": 1,
+      "unit": "px",
+      "default": -1
     }
   ],
   "presets": [

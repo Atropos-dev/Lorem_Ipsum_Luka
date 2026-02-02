@@ -448,7 +448,7 @@
 
 <div
   id="Hero-{{ section.id }}"
-  class="hero color-{{ section.settings.color_scheme }}{% if section.blocks.size == 0 and section.settings.section_height == 'auto' %} hero--no-blocks-auto-height{% endif %}{% if section.settings.stack_media_on_mobile %} hero--stack-mobile{% endif %}"
+ class="hero color-{{ section.settings.color_scheme }}{% if section.blocks.size == 0 and section.settings.section_height == 'auto' %} hero--no-blocks-auto-height{% endif %} {{ section.settings.visibility }} {% if has_media_multiple and section.settings.mobile_direction == 'vertical' %}hero-vertical{% endif %} {% render 'animate', animation: section.settings.animation %}"
   style="
     --hero-border-style: {{ section.settings.border }};
     --hero-border-width: {{ section.settings.border_width }}px;
@@ -792,6 +792,61 @@
   },
   "settings": [
     {
+      "type": "select",
+      "id": "visibility",
+      "label": "t:content.visibility",
+      "options": [
+        {
+          "value": "",
+          "label": "Both"
+        },
+        {
+          "value": "hidden--mobile",
+          "label": "t:settings.desktop_only"
+        },
+        {
+          "value": "hidden--desktop",
+          "label": "t:settings.mobile_only"
+        }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "animation",
+      "label": "Trigger animation",
+      "default": "slide-in",
+      "options": [
+        {
+          "value": "",
+          "label": "None"
+        },
+        {
+          "value": "fade-in",
+          "label": "FadeIn"
+        },
+        {
+          "value": "slide-in",
+          "label": "SlideIn"
+        }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "mobile_direction",
+      "label": "Mobile direction",
+      "options": [
+        {
+          "value": "horizontal",
+          "label": "Horizontal"
+        },
+        {
+          "value": "vertical",
+          "label": "Vertical"
+        }
+      ],
+      "default": "horizontal"
+    },
+    {
       "type": "header",
       "content": "t:content.media_1"
     },
@@ -1108,6 +1163,22 @@
     },
     {
       "type": "select",
+      "id": "section_width_mobile",
+      "label": "t:settings.width_mobile",
+      "options": [
+        {
+          "value": "page-width",
+          "label": "t:options.page"
+        },
+        {
+          "value": "full-width",
+          "label": "t:options.full"
+        }
+      ],
+      "default": "page-width"
+    },
+    {
+      "type": "select",
       "id": "section_height",
       "label": "t:settings.height",
       "options": [
@@ -1248,6 +1319,26 @@
       "step": 1,
       "unit": "px",
       "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding-block-start-mobile",
+      "label": "Top Mobile",
+      "min": -1,
+      "max": 99,
+      "step": 1,
+      "unit": "px",
+      "default": -1
+    },
+    {
+      "type": "range",
+      "id": "padding-block-end-mobile",
+      "label": "Bottom Mobile",
+      "min": -1,
+      "max": 99,
+      "step": 1,
+      "unit": "px",
+      "default": -1
     }
   ],
   "presets": [

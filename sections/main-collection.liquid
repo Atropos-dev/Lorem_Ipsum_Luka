@@ -23,9 +23,8 @@
 {% endjavascript %}
 
 {% comment %} We always render this full-width, as the child blocks have width: page/full settings {% endcomment %}
-<div class="section-background color-{{ section.settings.color_scheme }}"></div>
 <results-list
-  class="section product-grid-container color-{{ section.settings.color_scheme }}"
+  class="section product-grid-container color-{{ section.settings.color_scheme }} {% render 'animate', animation: section.settings.animation %}"
   style="--padding-block-start: {{ section.settings.padding-block-start }}px; --padding-block-end: {{ section.settings.padding-block-end }}px;"
   section-id="{{ section.id }}"
   infinite-scroll="{{ section.settings.enable_infinite_scroll }}"
@@ -157,6 +156,26 @@
     "templates": ["collection"]
   },
   "settings": [
+    {
+      "type": "select",
+      "id": "animation",
+      "label": "Trigger animation",
+      "default": "slide-in",
+      "options": [
+        {
+          "value": "",
+          "label": "None"
+        },
+        {
+          "value": "fade-in",
+          "label": "FadeIn"
+        },
+        {
+          "value": "slide-in",
+          "label": "SlideIn"
+        }
+      ]
+    },
     {
       "type": "select",
       "id": "layout_type",
@@ -326,6 +345,26 @@
       "step": 1,
       "unit": "px",
       "default": 8
+    },
+    {
+      "type": "range",
+      "id": "padding-block-start-mobile",
+      "label": "Top Mobile",
+      "min": -1,
+      "max": 99,
+      "step": 1,
+      "unit": "px",
+      "default": -1
+    },
+    {
+      "type": "range",
+      "id": "padding-block-end-mobile",
+      "label": "Bottom Mobile",
+      "min": -1,
+      "max": 99,
+      "step": 1,
+      "unit": "px",
+      "default": -1
     }
   ],
   "presets": []

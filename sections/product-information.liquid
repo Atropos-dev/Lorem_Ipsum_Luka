@@ -373,6 +373,45 @@
   },
   "settings": [
     {
+      "type": "select",
+      "id": "visibility",
+      "label": "t:content.visibility",
+      "options": [
+        {
+          "value": "",
+          "label": "Both"
+        },
+        {
+          "value": "hidden--mobile",
+          "label": "t:settings.desktop_only"
+        },
+        {
+          "value": "hidden--desktop",
+          "label": "t:settings.mobile_only"
+        }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "animation",
+      "label": "Trigger animation",
+      "default": "slide-in",
+      "options": [
+        {
+          "value": "",
+          "label": "None"
+        },
+        {
+          "value": "fade-in",
+          "label": "FadeIn"
+        },
+        {
+          "value": "slide-in",
+          "label": "SlideIn"
+        }
+      ]
+    },
+    {
       "type": "header",
       "content": "t:content.layout"
     },
@@ -466,6 +505,26 @@
       "step": 1,
       "unit": "px",
       "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding-block-start-mobile",
+      "label": "Top Mobile",
+      "min": -1,
+      "max": 99,
+      "step": 1,
+      "unit": "px",
+      "default": -1
+    },
+    {
+      "type": "range",
+      "id": "padding-block-end-mobile",
+      "label": "Bottom Mobile",
+      "min": -1,
+      "max": 99,
+      "step": 1,
+      "unit": "px",
+      "default": -1
     }
   ],
   "presets": []

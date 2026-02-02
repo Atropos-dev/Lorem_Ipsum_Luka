@@ -154,145 +154,97 @@
         {
           "value": "var(--font-accent--family)",
           "label": "t:options.accent"
+        },
+        {
+          "value": "var(--font-nav--family)",
+          "label": "t:options.nav"
         }
       ],
       "default": "var(--font-body--family)"
     },
-    {
-      "type": "select",
+     {
+      "type": "range",
       "id": "font_size",
       "label": "t:settings.size",
-      "options": [
-        {
-          "value": "",
-          "label": "t:options.default"
-        },
-        {
-          "value": "0.625rem",
-          "label": "10px"
-        },
-        {
-          "value": "0.75rem",
-          "label": "12px"
-        },
-        {
-          "value": "0.875rem",
-          "label": "14px"
-        },
-        {
-          "value": "1rem",
-          "label": "16px"
-        },
-        {
-          "value": "1.125rem",
-          "label": "18px"
-        },
-        {
-          "value": "1.25rem",
-          "label": "20px"
-        },
-        {
-          "value": "1.5rem",
-          "label": "24px"
-        },
-        {
-          "value": "2rem",
-          "label": "32px"
-        },
-        {
-          "value": "2.5rem",
-          "label": "40px"
-        },
-        {
-          "value": "3rem",
-          "label": "48px"
-        },
-        {
-          "value": "3.5rem",
-          "label": "56px"
-        },
-        {
-          "value": "4.5rem",
-          "label": "72px"
-        },
-        {
-          "value": "5.5rem",
-          "label": "88px"
-        },
-        {
-          "value": "7.5rem",
-          "label": "120px"
-        },
-        {
-          "value": "9.5rem",
-          "label": "152px"
-        },
-        {
-          "value": "11.5rem",
-          "label": "184px"
-        }
-      ],
-      "default": "1rem"
+      "min": 10,
+      "max": 48,
+      "step": 2,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "font_size_mobile",
+      "label": "t:settings.size_mobile",
+      "min": 10,
+      "max": 48,
+      "step": 2,
+      "unit": "px",
+      "default": 14
     },
     {
       "type": "select",
-      "id": "weight",
+      "id": "font_weight",
       "label": "t:settings.weight",
+      "default": "400",
       "options": [
         {
-          "value": "",
-          "label": "t:options.default"
+          "value": "100",
+          "label": "100"
         },
         {
-          "value": "100",
-          "label": "t:options.thin"
+          "value": "200",
+          "label": "200"
         },
         {
           "value": "300",
-          "label": "t:options.light"
+          "label": "300"
         },
         {
           "value": "400",
-          "label": "t:options.regular"
+          "label": "400"
         },
         {
           "value": "500",
-          "label": "t:options.medium"
+          "label": "500"
         },
         {
           "value": "600",
-          "label": "t:options.semibold"
+          "label": "600"
         },
         {
           "value": "700",
-          "label": "t:options.bold"
+          "label": "700"
+        },
+        {
+          "value": "800",
+          "label": "800"
         },
         {
           "value": "900",
-          "label": "t:options.black"
+          "label": "900"
         }
-      ],
-      "default": ""
+      ]
     },
     {
-      "type": "select",
+      "type": "range",
+      "id": "line_height",
+      "label": "t:settings.line_height",
+      "default": 160,
+      "min": 0,
+      "max": 200,
+      "step": 2,
+      "unit": "%"
+    },
+    {
+      "type": "range",
       "id": "letter_spacing",
       "label": "t:settings.letter_spacing",
-      "options": [
-        {
-          "value": "tight",
-          "label": "t:options.tight"
-        },
-        {
-          "value": "normal",
-          "label": "t:options.normal"
-        },
-        {
-          "value": "loose",
-          "label": "t:options.loose"
-        }
-      ],
-      "default": "normal"
+      "default": 0,
+      "min": -50,
+      "max": 50,
+      "step": 1,
+      "unit": "%"
     },
     {
       "type": "select",
@@ -313,11 +265,7 @@
   ],
   "presets": [
     {
-      "name": "t:names.announcement",
-      "settings": {
-        "font": "var(--font-subheading--family)",
-        "font_size": "0.75rem"
-      }
+      "name": "t:names.announcement"
     }
   ]
 }

@@ -9,7 +9,7 @@
 
 {%- assign tag = tag | default: 'button' -%}
 <{{ tag }}
-  class="account-button header-actions__action"
+  class="account-button header-actions__action{% unless block_settings.account_icon_type == 'icon' and block_settings.account_icon_text == blank and customer.has_avatar? and customer.first_name and customer.email %} account-button__text{% endunless %}"
   aria-label="{{ 'accessibility.account' | t }}"
   aria-haspopup="dialog"
   {%- if popover_id -%}
@@ -35,6 +35,12 @@
     >
       {{- initial -}}
     </span>
+  {%- elsif block_settings.account_icon_type == 'text' and block_settings.account_icon_text != blank -%}
+    <span
+      aria-hidden="true"
+    >
+      {{- block_settings.account_icon_text -}}
+    </span>
   {%- else -%}
     <span
       class="account-button__icon"
@@ -59,6 +65,9 @@
     align-content: center;
     transition: color var(--animation-speed) var(--animation-easing);
     anchor-name: --account-button-trigger;
+  }
+  .account-button__text {
+    width: auto;
   }
 
   .account-button__avatar {

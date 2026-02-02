@@ -16,12 +16,16 @@
       aria-label="{{ 'content.search_input_label' | t }}"
       aria-haspopup="dialog"
     >
+      {% if section.settings.search_icon_type == 'text' and section.settings.search_icon_text != blank %}
+        <span>{{ section.settings.search_icon_text }}</span>
+      {% else %}
       <span
         aria-hidden="true"
         class="svg-wrapper"
       >
         {{ 'icon-search.svg' | inline_asset_content }}
       </span>
+      {% endif %}
     </button>
   </search-button>
 {% endunless %}

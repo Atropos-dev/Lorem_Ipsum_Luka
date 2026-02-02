@@ -6,7 +6,8 @@
  * or related systems. Please exercise caution as any changes
  * made to this file may be overwritten.
  * ------------------------------------------------------------
- */{
+ */
+{
   "sections": {
     "search": {
       "type": "search-header",
@@ -17,20 +18,13 @@
           "settings": {
             "type_preset": "h2",
             "font": "var(--font-primary--family)",
-            "font_size": "",
-            "line_height": "normal",
-            "letter_spacing": "normal",
             "case": "none",
             "wrap": "pretty",
             "color": "",
             "text": "",
             "read_only": true,
             "alignment": "left",
-            "show_alignment": true,
-            "padding-block-start": 0,
-            "padding-block-end": 0,
-            "padding-inline-start": 0,
-            "padding-inline-end": 0
+            "show_alignment": true
           },
           "blocks": {}
         },
@@ -121,9 +115,6 @@
                 "alignment": "left",
                 "type_preset": "rte",
                 "font": "var(--font-body--family)",
-                "font_size": "1rem",
-                "line_height": "normal",
-                "letter_spacing": "normal",
                 "case": "none",
                 "wrap": "pretty",
                 "color": "var(--color-foreground)",
@@ -148,9 +139,6 @@
                 "width": "100%",
                 "alignment": "left",
                 "font": "var(--font-body--family)",
-                "font_size": "1rem",
-                "line_height": "normal",
-                "letter_spacing": "normal",
                 "case": "none",
                 "color": "var(--color-foreground)",
                 "padding-block-start": 0,

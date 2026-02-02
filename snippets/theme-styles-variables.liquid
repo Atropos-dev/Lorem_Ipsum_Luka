@@ -132,6 +132,15 @@
     --narrow-page-width: 90rem;
     --normal-page-width: 120rem;
     --wide-page-width: 150rem;
+    --custom-page-width: {{ settings.page_width }}rem;
+
+    /* Page margin */
+    --page-margin-desktop: {{ settings.page_margin }}px;
+    {% if settings.page_margin_mobile == -1 %}
+      --page-margin-mobile: {{ settings.page_margin }}px;
+    {% else %}
+      --page-margin-mobile: {{ settings.page_margin_mobile }}px;
+    {% endif %}
 
     /* Section Heights */
     --section-height-small: 15rem;
@@ -155,18 +164,41 @@
     --letter-spacing-md: 0.13em;
 
     /* Font families */
+    {% if settings.custom_body_font %}
+      --font-body--family: 'BrandBodyFont', sans-serif;
+    {% else %}
     --font-body--family: {{ settings.type_body_font.family }}, {{ settings.type_body_font.fallback_families }};
+    {% endif %}
     --font-body--style: {{ settings.type_body_font.style }};
     --font-body--weight: {{ settings.type_body_font.weight }};
+    {% if settings.custom_subheading_font %}
+      --font-subheading--family: 'BrandSubheadingFont', sans-serif;
+    {% else %}
     --font-subheading--family: {{ settings.type_subheading_font.family }}, {{ settings.type_subheading_font.fallback_families }};
+    {% endif %}
     --font-subheading--style: {{ settings.type_subheading_font.style }};
     --font-subheading--weight: {{ settings.type_subheading_font.weight }};
+    {% if settings.custom_heading_font %}
+      --font-heading--family: 'BrandHeadingFont', sans-serif;
+    {% else %}
     --font-heading--family: {{ settings.type_heading_font.family }}, {{ settings.type_heading_font.fallback_families }};
+    {% endif %}
     --font-heading--style: {{ settings.type_heading_font.style }};
     --font-heading--weight: {{ settings.type_heading_font.weight }};
+    {% if settings.custom_accent_font %}
+      --font-accent--family: 'BrandAccentFont', sans-serif;
+    {% else %}
     --font-accent--family: {{ settings.type_accent_font.family }}, {{ settings.type_accent_font.fallback_families }};
+    {% endif %}
     --font-accent--style: {{ settings.type_accent_font.style }};
-    --font-accent--weight: {{ settings.type_accent_font.weight }};
+    --font-accent--weight: {{ settings.type_accent_font.weight }};3
+    {% if settings.custom_nav_font %}
+      --font-nav--family: 'BrandAccentFont', sans-serif;
+    {% else %}
+      --font-nav--family: {{ settings.type_nav_font.family }}, {{ settings.type_nav_font.fallback_families }};
+    {% endif %}
+    --font-nav--style: {{ settings.type_nav_font.style }};
+    --font-nav--weight: {{ settings.type_nav_font.weight }};
 
     /* Margin sizes */
     --font-h1--spacing: 0.25em;
@@ -251,6 +283,8 @@
       for font_size in font_sizes
         assign size_setting = 'type_size_[font_size]' | replace: '[font_size]', font_size
         assign size_setting_value = settings[size_setting] | times: 1
+        assign size_setting_mobile = 'type_size_[font_size]_mobile' | replace: '[font_size]', font_size
+        assign size_setting_value_mobile = settings[size_setting_mobile] | times: 1
 
         comment
           If the font size is less than 100, pad it with a 0
@@ -260,10 +294,16 @@
           assign size_setting_value = '0[size_setting_value]' | replace: '[size_setting_value]', size_setting_value
         endif
 
+        if size_setting_value_mobile < 100
+          assign size_setting_value_mobile = '0[size_setting_value_mobile]' | replace: '[size_setting_value_mobile]', size_setting_value_mobile
+        endif
+
         assign font_size_values = font_size_values | append: '[size_setting_value],' | replace: '[size_setting_value]', size_setting_value
+        assign font_size_values_mobile = font_size_values_mobile | append: '[size_setting_value_mobile],' | replace: '[size_setting_value_mobile]', size_setting_value_mobile
       endfor
 
       assign font_size_values = font_size_values | split: ',' | uniq | sort_natural
+      assign font_size_values_mobile = font_size_values_mobile | split: ',' | uniq | sort_natural
 
       comment
         For each font size S, find the next smaller size S-1, and determine the minimum for S
@@ -274,6 +314,11 @@
         assign font_size_value = settings[size_setting] | times: 1
         assign font_size_string = '[font_size_value]' | replace: '[font_size_value]', font_size_value
         assign index = font_size_values | find_index: font_size_string
+        
+        assign size_setting_mobile = 'type_size_[font_size]_mobile' | replace: '[font_size]', font_size
+        assign font_size_value_mobile = settings[size_setting_mobile] | times: 1
+        assign font_size_string_mobile = '[font_size_value_mobile]' | replace: '[font_size_value_mobile]', font_size_value_mobile
+        assign index_mobile = font_size_values_mobile | find_index: font_size_string_mobile
 
         if font_size_value >= fluid_size_cutoff
 
@@ -281,24 +326,36 @@
             Calculate the minimum size for each font size
           endcomment
           assign fluid_font_size_min = font_size_value
+          assign fluid_font_size_min_mobile = font_size_value_mobile
 
           if index == 0
             assign fluid_font_size_min = absolute_font_size_min
+            assign fluid_font_size_min_mobile = fluid_font_size_min_mobile
+
           else
             assign next_font_size_index = index | minus: 1
             assign next_font_size_value = font_size_values[next_font_size_index]
             assign next_font_size_value_number = next_font_size_value | times: 1
+
+            assign next_font_size_index_mobile = index_mobile | minus: 1
+            assign next_font_size_value_mobile = font_size_values_mobile[next_font_size_index_mobile]
+            assign next_font_size_value_number_mobile = next_font_size_value_mobile | times: 1
+
 
             comment
               If the next bigger font size under the fluid cutoff, we use keep a 4px buffer
             endcomment
             if next_font_size_value_number < fluid_size_cutoff
               assign fluid_font_size_min = next_font_size_value_number | plus: 4
+              assign fluid_font_size_min_mobile = next_font_size_value_number_mobile | plus: 4
+
               if font_size_value < fluid_font_size_min
                 assign fluid_font_size_min = font_size_value
+                assign fluid_font_size_min_mobile = font_size_value_mobile
               endif
             else
               assign fluid_font_size_min = next_font_size_value | times: 1
+              assign fluid_font_size_min_mobile = next_font_size_value_mobile | times: 1
             endif
           endif
 
@@ -308,11 +365,17 @@
           assign fluid_size_min_rem = fluid_font_size_min | divided_by: 16.0
           assign fluid_size = font_size_value | times: 0.1
           assign fluid_size_max_rem = font_size_value | divided_by: 16.0
+          assign fluid_size_min_rem_mobile = fluid_font_size_min_mobile | divided_by: 16.0
+          assign fluid_size_mobile = font_size_value_mobile | times: 0.1
+          assign fluid_size_max_rem_mobile = font_size_value_mobile | divided_by: 16.0
 
           echo '--font-size--[font_size]: clamp([fluid_size_min_rem]rem, [fluid_size]vw, [fluid_size_max_rem]rem);' | replace: '[font_size]', font_size | replace: '[fluid_size_min_rem]', fluid_size_min_rem | replace: '[fluid_size]', fluid_size | replace: '[fluid_size_max_rem]', fluid_size_max_rem
+          echo '--font-size--[font_size]-mobile: clamp([fluid_size_min_rem_mobile]rem, [fluid_size_mobile]vw, [fluid_size_max_rem_mobile]rem);' | replace: '[font_size]', font_size | replace: '[fluid_size_min_rem_mobile]', fluid_size_min_rem_mobile | replace: '[fluid_size_mobile]', fluid_size_mobile | replace: '[fluid_size_max_rem_mobile]', fluid_size_max_rem_mobile
         else
           assign fluid_size_rem = font_size_value | divided_by: 16.0
+          assign fluid_size_rem_mobile = font_size_value_mobile | divided_by: 16.0
           echo '--font-size--[font_size]: [fluid_size_rem]rem;' | replace: '[font_size]', font_size | replace: '[fluid_size_rem]', fluid_size_rem
+          echo '--font-size--[font_size]-mobile: [fluid_size_rem_mobile]rem;' | replace: '[font_size]', font_size | replace: '[fluid_size_rem_mobile]', fluid_size_rem_mobile
         endif
       endfor
 
@@ -320,34 +383,33 @@
 
       for preset_name in type_presets
         assign preset_size = '--font-size--[preset_name]' | replace: '[preset_name]', preset_name
+        assign preset_size_mobile = '--font-size--[preset_name]-mobile' | replace: '[preset_name]', preset_name
         assign preset_line_height = 'type_line_height_[preset_name]' | replace: '[preset_name]', preset_name
+        assign preset_letter_spacing = 'type_letter_spacing_[preset_name]' | replace: '[preset_name]', preset_name
+        assign preset_weight = 'type_weight_[preset_name]' | replace: '[preset_name]', preset_name
+        assign preset_line_height_value = settings[preset_line_height] | append: '%'
+        assign preset_letter_spacing_value = settings[preset_letter_spacing] | times: 1.0 | divided_by: 100 | append: 'em'
+
 
         if preset_name == 'paragraph'
           assign preset_font = '--font-body--family'
           assign preset_style = '--font-body--style'
-          assign preset_weight = '400'
           assign preset_case = '--font-body--case'
-          assign preset_letter_spacing = 'body-normal'
-
-          echo '--font-[preset_name]--weight: [preset_weight];' | replace: '[preset_name]', preset_name | replace: '[preset_weight]', preset_weight
-          echo '--font-[preset_name]--letter-spacing: var(--letter-spacing--[preset_letter_spacing]);' | replace: '[preset_name]', preset_name | replace: '[preset_letter_spacing]', preset_letter_spacing
         else
           assign preset_font_id = 'type_font_[preset_name]' | replace: '[preset_name]', preset_name
           assign preset_font = '--font-[preset_font]--family' | replace: '[preset_font]', settings[preset_font_id]
           assign preset_style = '--font-[preset_font]--style' | replace: '[preset_font]', settings[preset_font_id]
-          assign preset_weight = '--font-[preset_font]--weight' | replace: '[preset_font]', settings[preset_font_id]
           assign preset_case = 'type_case_[preset_name]' | replace: '[preset_name]', preset_name
-          assign preset_letter_spacing = 'type_letter_spacing_[preset_name]' | replace: '[preset_name]', preset_name
-
-          echo '--font-[preset_name]--weight: var([preset_weight]);' | replace: '[preset_name]', preset_name | replace: '[preset_weight]', preset_weight
-          echo '--font-[preset_name]--letter-spacing: var(--letter-spacing--[preset_letter_spacing]);' | replace: '[preset_name]', preset_name | replace: '[preset_letter_spacing]', settings[preset_letter_spacing]
         endif
 
         echo '--font-[preset_name]--size: var([preset_size]);' | replace: '[preset_name]', preset_name | replace: '[preset_size]', preset_size
+        echo '--font-[preset_name]--size-mobile: var([preset_size_mobile]);' | replace: '[preset_name]', preset_name | replace: '[preset_size_mobile]', preset_size_mobile
         echo '--font-[preset_name]--family: var([preset_font]);' | replace: '[preset_name]', preset_name | replace: '[preset_font]', preset_font
         echo '--font-[preset_name]--style: var([preset_style]);' | replace: '[preset_name]', preset_name | replace: '[preset_style]', preset_style
         echo '--font-[preset_name]--case: [preset_case];' | replace: '[preset_name]', preset_name | replace: '[preset_case]', settings[preset_case]
-        echo '--font-[preset_name]--line-height: var(--line-height--[preset_line_height]);' | replace: '[preset_name]', preset_name | replace: '[preset_line_height]', settings[preset_line_height]
+                echo '--font-[preset_name]--weight: [preset_weight];' | replace: '[preset_name]', preset_name | replace: '[preset_weight]', settings[preset_weight]
+        echo '--font-[preset_name]--letter-spacing: [preset_letter_spacing_value];' | replace: '[preset_name]', preset_name | replace: '[preset_letter_spacing_value]', preset_letter_spacing_value
+        echo '--font-[preset_name]--line-height: [preset_line_height_value];' | replace: '[preset_name]', preset_name | replace: '[preset_line_height_value]', preset_line_height_value
       endfor
     %}
 
@@ -495,6 +557,10 @@
     --animation-timing-fade-in: cubic-bezier(0.16, 1, 0.3, 1);
     --animation-timing-fade-out: cubic-bezier(0.4, 0, 0.2, 1);
 
+    --transition-delay: {{ settings.transition_delay }}s;
+    --transition-duration: {{ settings.transition_duration }}s;
+    --transition-ease-type: {{ settings.transition_ease }};
+
     /* View transitions */
     /* View transition old */
     --view-transition-old-main-content: var(--animation-speed) var(--animation-easing) both fadeOut;
@@ -547,14 +613,42 @@
     --button-padding-inline: 24px;
     --button-padding-block: 16px;
 
+      --button-padding-block-primary: {{ settings.button_padding_block_primary }}px;
+    --button-padding-inline-primary: {{ settings.button_padding_inline_primary }}px;
+    --button-padding-block-primary-mobile: {{ settings.mobile_button_padding_block_primary }}px;
+    --button-padding-inline-primary-mobile: {{ settings.mobile_button_padding_inline_primary }}px;
+    --button-size-primary: {{ settings.button_font_size_primary }}px;
+    --button-size-primary-mobile: {{ settings.mobile_button_font_size_primary }}px;
+    --button-weight-primary: {{ settings.button_font_weight_primary }};
+    --button-line-height-primary: {{ settings.button_font_line_height_primary }}%;
+    --button-letter-spacing-primary: {{ settings.button_font_letter_spacing_primary | divided_by: 100.0 }}em;
+
+    --button-padding-block-secondary: {{ settings.button_padding_block_secondary }}px;
+    --button-padding-inline-secondary: {{ settings.button_padding_inline_secondary }}px;
+    --button-padding-block-secondary-mobile: {{ settings.mobile_button_padding_block_secondary }}px;
+    --button-padding-inline-secondary-mobile: {{ settings.mobile_button_padding_inline_secondary }}px;
+    --button-size-secondary: {{ settings.button_font_size_secondary }}px;
+    --button-size-secondary-mobile: {{ settings.mobile_button_font_size_secondary }}px;
+    --button-weight-secondary: {{ settings.button_font_weight_secondary }};
+    --button-line-height-secondary: {{ settings.button_font_line_height_secondary }}%;
+    --button-letter-spacing-secondary: {{ settings.button_font_letter_spacing_secondary | divided_by: 100.0 }}em;
+
+    --button-size-link: {{ settings.button_font_size_link }}px;
+    --button-size-link-mobile: {{ settings.mobile_button_font_size_link }}px;
+    --button-weight-link: {{ settings.button_font_weight_slink }};
+    --button-line-height-link: {{ settings.button_font_line_height_link }}%;
+    --button-letter-spacing-link: {{ settings.button_font_letter_spacing_link | divided_by: 100.0 }}em;
+
     /* Button font-family */
     --button-font-family-primary: var(--font-{{ settings.type_font_button_primary }}--family);
     --button-font-family-secondary: var(--font-{{ settings.type_font_button_secondary }}--family);
+    --button-font-family-link: var(--font-{{ settings.type_font_button_link }}--family);
 
     /* Button text case */
     --button-text-case: {{ settings.button_text_case }};
     --button-text-case-primary: {{ settings.button_text_case_primary }};
     --button-text-case-secondary: {{ settings.button_text_case_secondary }};
+    --button-text-case-link: {{ settings.button_text_case_link }};
 
     /* Borders */
     --border-color: rgb(var(--color-border-rgb) / var(--opacity-50));
@@ -639,4 +733,37 @@
     --cart-secondary-font-style: var(--font-{{ settings.cart_price_font }}--style);
     --cart-secondary-font-weight: var(--font-{{ settings.cart_price_font }}--weight);
   }
+
+  {% if settings.button_hover_link == 'underline' %}
+    .link,
+    a span {
+      position: relative;
+      padding-bottom: 2px;
+    }
+
+    .link:after,
+    a span:after {
+      display: block;
+      transition: width .3s cubic-bezier(.32, .24, .15, 1);
+      height: 1px;
+      background: currentColor;
+      bottom: 0;
+      left:0;
+      content: "";
+      position: absolute;
+      width: 0;
+    }
+
+    .link:hover,
+    a:hover span {
+      color: var(--color, var(--color-primary)) !important;
+    }
+
+    .link:hover:after,
+    a:hover span:after {
+      box-shadow: none;
+      width: 100%;
+      transition: width .3s cubic-bezier(.32, .24, .15, 1);
+    }
+  {% endif %}
 {% endstyle %}

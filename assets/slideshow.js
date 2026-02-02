@@ -463,6 +463,19 @@ export class Slideshow extends Component {
    * Setup the slideshow with controls for when there are multiple slides
    */
   #setupSlideshow() {
+    // Check if fade mode is enabled (example: attribute fade-mode)
+    if (this.dataset.animation == 'fade') {
+      const { slides } = this.refs;
+      if (!slides || slides.length <= 1) {
+        this.#setupSlideshowWithoutControls();
+        return;
+      }
+
+      this.#setupFadeMode();
+      return;
+    }
+
+    // Original sliding setup
     // Setup IntersectionObserver first for efficient visibility tracking
     this.#setupIntersectionObserver();
 
@@ -523,6 +536,139 @@ export class Slideshow extends Component {
 
       this.#resizeObserver.observe(this.refs.slideshowContainer);
     });
+  }
+
+  
+  #setupFadeMode() {
+    const { slides } = this.refs;
+    if (!slides || slides.length <= 1) {
+      this.#setupSlideshowWithoutControls();
+      return;
+    }
+
+    // Initialize current slide
+    this.current = 0;
+
+    // Set all slides hidden except the first
+    slides.forEach((slide, index) => {
+      slide.style.position = 'absolute';
+      slide.style.top = 0;
+      slide.style.left = 0;
+      slide.style.width = '100%';
+      slide.style.transition = 'opacity 0.5s ease';
+      slide.style.opacity = index === this.current ? 1 : 0;
+      slide.setAttribute('aria-hidden', index !== this.current);
+    });
+
+    this.addEventListener('mouseenter', this.suspend);
+    this.addEventListener('mouseleave', this.resume);
+
+    let touchStartX = 0;
+    let touchEndX = 0;
+    let isDown = false;
+    let startX = 0;
+    let endX = 0;
+
+    setTimeout(() => {
+
+      const element = this.querySelector('slideshow-slides');
+      if(!element) return;
+
+      element.addEventListener('mousedown', (e) => {
+        isDown = true;
+        startX = e.clientX;
+      });
+
+      element.addEventListener('mousemove', (e) => {
+        if (!isDown) return;
+        endX = e.clientX;
+      });
+
+      element.addEventListener('mouseup', () => {
+        if (!isDown) return;
+        isDown = false;
+
+        const distance = endX - startX;
+
+        if (Math.abs(distance) < 50) {
+          return;
+        }
+
+        if (distance > 0) {
+          this.previous();
+        } else {
+          this.next();
+        }
+      });
+      
+      element.addEventListener('touchstart', (e) => {
+        touchStartX = e.changedTouches[0].screenX;
+      });
+
+      element.addEventListener('touchend', (e) => {
+        touchEndX = e.changedTouches[0].screenX;
+        handleGesture();
+      });
+    }, 1000);
+
+    function handleGesture() {
+      const swipeDistance = touchEndX - touchStartX;
+
+      if (Math.abs(swipeDistance) < 50) {
+        return;
+      }
+
+      if (swipeDistance > 0) {
+        this.previous();
+      } else {
+        this.next();
+      }
+    }
+
+    // Autoplay
+    if (this.autoplay) this.play();
+
+    // Override next/previous for fade
+    const slideCount = slides.length;
+    const fadeTo = (index) => {
+      if (!slides || index === this.current) return;
+
+      const prev = this.current;
+      this.current = index;
+
+      slides[prev].style.opacity = 0;
+      slides[prev].setAttribute('aria-hidden', 'true');
+
+      slides[index].style.opacity = 1;
+      slides[index].setAttribute('aria-hidden', 'false');
+
+      this.dispatchEvent(
+        new SlideshowSelectEvent({
+          index,
+          previousIndex: prev,
+          userInitiated: true,
+          trigger: 'fade',
+          slide: slides[index],
+          id: slides[index].getAttribute('slide-id'),
+        })
+      );
+    };
+
+    this.next = (event) => {
+      event?.preventDefault();
+      const nextIndex = this.infinite
+        ? (this.current + 1) % slideCount
+        : Math.min(this.current + 1, slideCount - 1);
+      fadeTo(nextIndex);
+    };
+
+    this.previous = (event) => {
+      event?.preventDefault();
+      const prevIndex = this.infinite
+        ? (this.current - 1 + slideCount) % slideCount
+        : Math.max(this.current - 1, 0);
+      fadeTo(prevIndex);
+    };
   }
 
   /**
@@ -699,6 +845,17 @@ export class Slideshow extends Component {
 
       this.#centerSelectedThumbnail(newIndex);
 
+      if (this.infinite) {
+        if (newIndex > currentIndex) {
+          this.next();
+        } else if (newIndex < currentIndex) {
+          this.previous();
+        } else if (newIndex == 0 && currentIndex == 0) {
+          this.previous();
+        } else {
+          this.next();
+        }
+      } else {
       this.dispatchEvent(
         new SlideshowSelectEvent({
           index: newIndex,
@@ -709,7 +866,7 @@ export class Slideshow extends Component {
           id: newSlide.getAttribute('slide-id'),
         })
       );
-
+    }
       this.current = newIndex;
 
       await this.#scroll.finished;

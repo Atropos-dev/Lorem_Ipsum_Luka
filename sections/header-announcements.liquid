@@ -8,9 +8,9 @@
   ></script>
 {% endif %}
 
-<div class="section-background color-{{ section.settings.color_scheme }}"></div>
+<div class="section-background color-{{ section.settings.color_scheme }} {{ section.settings.visibility }} {% render 'animate', animation: section.settings.animation %}"></div>
 <aside
-  class="announcement-bar spacing-style section section--{{ section.settings.section_width }} color-{{ section.settings.color_scheme }}"
+  class="announcement-bar spacing-style section section-mobile--{{ section.settings.section_width_mobile }} section--{{ section.settings.section_width }} color-{{ section.settings.color_scheme }} {{ section.settings.visibility }} {% render 'animate', animation: section.settings.animation %}"
   style="{% render 'spacing-padding', settings: section.settings %}; --border-bottom-width: {{ section.settings.divider_width }}px;"
 >
   {% liquid
@@ -134,6 +134,45 @@
     "groups": ["header"]
   },
   "settings": [
+  {
+      "type": "select",
+      "id": "visibility",
+      "label": "t:content.visibility",
+      "options": [
+        {
+          "value": "",
+          "label": "Both"
+        },
+        {
+          "value": "hidden--mobile",
+          "label": "t:settings.desktop_only"
+        },
+        {
+          "value": "hidden--desktop",
+          "label": "t:settings.mobile_only"
+        }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "animation",
+      "label": "Trigger animation",
+      "default": "",
+      "options": [
+        {
+          "value": "",
+          "label": "None"
+        },
+        {
+          "value": "fade-in",
+          "label": "FadeIn"
+        },
+        {
+          "value": "slide-in",
+          "label": "SlideIn"
+        }
+      ]
+    },
     {
       "type": "range",
       "id": "speed",
@@ -151,6 +190,22 @@
       "type": "select",
       "id": "section_width",
       "label": "t:settings.section_width",
+      "options": [
+        {
+          "value": "page-width",
+          "label": "t:options.page"
+        },
+        {
+          "value": "full-width",
+          "label": "t:options.full"
+        }
+      ],
+      "default": "page-width"
+    },
+    {
+      "type": "select",
+      "id": "section_width_mobile",
+      "label": "t:settings.width_mobile",
       "options": [
         {
           "value": "page-width",
@@ -202,6 +257,26 @@
       "step": 1,
       "unit": "px",
       "default": 15
+    },
+    {
+      "type": "range",
+      "id": "padding-block-start-mobile",
+      "label": "Top Mobile",
+      "min": -1,
+      "max": 99,
+      "step": 1,
+      "unit": "px",
+      "default": -1
+    },
+    {
+      "type": "range",
+      "id": "padding-block-end-mobile",
+      "label": "Bottom Mobile",
+      "min": -1,
+      "max": 99,
+      "step": 1,
+      "unit": "px",
+      "default": -1
     }
   ],
   "presets": [

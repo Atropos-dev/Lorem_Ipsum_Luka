@@ -60,6 +60,7 @@
     // Quick add button on product cards, shortened version of add to cart
     "add": "Add",
     "add_to_cart": "Add to cart",
+    "cart_upsell_add_to_cart": "Add · {{ price }}",
     // Success message shown after adding item to cart
     "added": "Added",
     // Button to apply discount code to cart
@@ -291,6 +292,7 @@
     "price_at": "at",
     "price_range": "Price range",
     "your_cart_is_empty": "Your cart is empty",
+     "free_shipping_add_more": "Add {{ amount }} more for free shipping!",
     "product_count": "Product count",
     "errors": "Errors",
     "wrong_password": "Wrong password",
@@ -347,6 +349,8 @@
       "quantity_error_max": "This item has a maximum of {{ maximum }}",
       "sold_out": "Sold out",
       "unavailable": "Unavailable",
+      "coming_soon": "Coming soon",
+      "preorder": "Preorder",
       "quantity": "Quantity",
       "quantity_increments": "Increments of {{ increment }}",
       "quantity_minimum": "Minimum of {{ minimum }}",

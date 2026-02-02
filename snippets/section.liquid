@@ -5,9 +5,9 @@
   @param {string} children - The children of the section
 {%- enddoc -%}
 
-<div class="section-background color-{{ section.settings.color_scheme }}"></div>
+<div class="section-background color-{{ section.settings.color_scheme }} {{ section.settings.visibility }} {% render 'animate', animation: section.settings.animation %}"></div>
 <div
-  class="section section--{{ section.settings.section_width }} color-{{ section.settings.color_scheme }}"
+  class="section section-mobile--{{ section.settings.section_width_mobile }} section--{{ section.settings.section_width }} color-{{ section.settings.color_scheme }} {{ section.settings.visibility }} {% render 'animate', animation: section.settings.animation %}"
   data-testid="ui-test-section"
 
   {% if request.visual_preview_mode %}
@@ -19,6 +19,8 @@
       --section-min-height: {{ section.settings.section_height_custom }}svh;
     {% elsif section.settings.section_height == 'full-screen' %}
       --section-min-height: 100svh;
+    {% elsif section.settings.section_height == 'small' %}
+      --section-preview-height: 600px;
     {% elsif section.settings.section_height != '' %}
       --section-min-height: var(--section-height-{{ section.settings.section_height }});
     {% endif %}
@@ -65,7 +67,7 @@
   </div>
 </div>
 
-{% stylesheet %}
+<style>
   .section-wrapper {
     --section-height-offset: 0px;
   }
@@ -94,4 +96,11 @@
   .custom-section-content {
     z-index: var(--layer-flat);
   }
-{% endstylesheet %}
+
+  @media (max-width: 749px) {
+    .custom-section-content .section-content-wrapper {
+      display: grid;
+      grid-template-columns: repeat({{ section.settings.mobile_columns }}, 1fr);
+    }
+  }
+</style>

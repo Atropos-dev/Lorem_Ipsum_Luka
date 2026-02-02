@@ -4,16 +4,18 @@
   assign max_items = section.settings.max_products
 %}
 
-<div class="section-background color-{{ section.settings.color_scheme }}"></div>
+<div class="section-background color-{{ section.settings.color_scheme }} {{ section.settings.visibility }} {% render 'animate', animation: section.settings.animation %}"></div>
 <div
-  data-testid="product-list"
   class="
     section
+    section-mobile--{{ section.settings.section_width_mobile }}
     section--{{ section.settings.section_width }}
     color-{{ section.settings.color_scheme }}
     section-resource-list
     spacing-style
     gap-style
+    {{ section.settings.visibility }}
+    {% render 'animate', animation: section.settings.animation %}
   "
   style="
     {% render 'spacing-style', settings: section.settings %}
@@ -99,6 +101,45 @@
     "groups": ["header", "footer"]
   },
   "settings": [
+     {
+      "type": "select",
+      "id": "visibility",
+      "label": "t:content.visibility",
+      "options": [
+        {
+          "value": "",
+          "label": "Both"
+        },
+        {
+          "value": "hidden--mobile",
+          "label": "t:settings.desktop_only"
+        },
+        {
+          "value": "hidden--desktop",
+          "label": "t:settings.mobile_only"
+        }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "animation",
+      "label": "Trigger animation",
+      "default": "slide-in",
+      "options": [
+        {
+          "value": "",
+          "label": "None"
+        },
+        {
+          "value": "fade-in",
+          "label": "FadeIn"
+        },
+        {
+          "value": "slide-in",
+          "label": "SlideIn"
+        }
+      ]
+    },
     {
       "type": "collection",
       "id": "collection",
@@ -283,6 +324,22 @@
     },
     {
       "type": "select",
+      "id": "section_width_mobile",
+      "label": "t:settings.width_mobile",
+      "options": [
+        {
+          "value": "page-width",
+          "label": "t:options.page"
+        },
+        {
+          "value": "full-width",
+          "label": "t:options.full"
+        }
+      ],
+      "default": "page-width"
+    },
+    {
+      "type": "select",
       "id": "horizontal_alignment",
       "label": "t:settings.alignment",
       "options": [
@@ -340,6 +397,26 @@
       "step": 1,
       "unit": "px",
       "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding-block-start-mobile",
+      "label": "Top Mobile",
+      "min": -1,
+      "max": 99,
+      "step": 1,
+      "unit": "px",
+      "default": -1
+    },
+    {
+      "type": "range",
+      "id": "padding-block-end-mobile",
+      "label": "Bottom Mobile",
+      "min": -1,
+      "max": 99,
+      "step": 1,
+      "unit": "px",
+      "default": -1
     }
   ],
   "presets": [
@@ -405,9 +482,9 @@
                 "text": "<h3>{{ closest.collection.title }}</h3>",
                 "type_preset": "rte",
                 "font": "var(--font-body--family)",
-                "font_size": "",
-                "line_height": "normal",
-                "letter_spacing": "normal",
+                "font_size": 24,
+                "line_height": 100,
+                "letter_spacing": 0,
                 "case": "none",
                 "wrap": "pretty",
                 "width": "fit-content",
@@ -477,9 +554,9 @@
                 "alignment": "left",
                 "type_preset": "rte",
                 "font": "var(--font-body--family)",
-                "font_size": "1rem",
-                "line_height": "normal",
-                "letter_spacing": "normal",
+                "font_size": 16,
+                "line_height": 100,
+                "letter_spacing": 0,
                 "case": "none",
                 "wrap": "pretty",
                 "color": "var(--color-foreground)",
@@ -503,9 +580,9 @@
                 "width": "100%",
                 "alignment": "left",
                 "font": "var(--font-body--family)",
-                "font_size": "1rem",
-                "line_height": "normal",
-                "letter_spacing": "normal",
+                "font_size": 16,
+                "line_height": 100,
+                "letter_spacing": 0,
                 "case": "none",
                 "color": "var(--color-foreground)",
                 "padding-block-start": 0,
@@ -582,9 +659,9 @@
                 "text": "<h3>{{ closest.collection.title }}</h3>",
                 "type_preset": "rte",
                 "font": "var(--font-body--family)",
-                "font_size": "",
-                "line_height": "normal",
-                "letter_spacing": "normal",
+                "font_size": 16,
+                "line_height": 100,
+                "letter_spacing": 0,
                 "case": "none",
                 "wrap": "pretty",
                 "width": "fit-content",
@@ -654,9 +731,9 @@
                 "alignment": "left",
                 "type_preset": "rte",
                 "font": "var(--font-body--family)",
-                "font_size": "1rem",
-                "line_height": "normal",
-                "letter_spacing": "normal",
+                "font_size": 16,
+                "line_height": 100,
+                "letter_spacing": 0,
                 "case": "none",
                 "wrap": "pretty",
                 "color": "var(--color-foreground)",
@@ -680,9 +757,9 @@
                 "width": "100%",
                 "alignment": "left",
                 "font": "var(--font-body--family)",
-                "font_size": "1rem",
-                "line_height": "normal",
-                "letter_spacing": "normal",
+                "font_size": 16,
+                "line_height": 100,
+                "letter_spacing": 0,
                 "case": "none",
                 "color": "var(--color-foreground)",
                 "padding-block-start": 0,
@@ -763,9 +840,9 @@
                 "alignment": "left",
                 "type_preset": "rte",
                 "font": "var(--font-body--family)",
-                "font_size": "",
-                "line_height": "normal",
-                "letter_spacing": "normal",
+                "font_size": 16,
+                "line_height": 100,
+                "letter_spacing": 0,
                 "case": "none",
                 "wrap": "pretty",
                 "color": "var(--color-foreground)",
@@ -836,9 +913,9 @@
                 "alignment": "left",
                 "type_preset": "rte",
                 "font": "var(--font-body--family)",
-                "font_size": "1rem",
-                "line_height": "normal",
-                "letter_spacing": "normal",
+                "font_size": 16,
+                "line_height": 100,
+                "letter_spacing": 0,
                 "case": "none",
                 "wrap": "pretty",
                 "color": "var(--color-foreground)",
@@ -862,9 +939,9 @@
                 "width": "100%",
                 "alignment": "left",
                 "font": "var(--font-body--family)",
-                "font_size": "1rem",
-                "line_height": "normal",
-                "letter_spacing": "normal",
+                "font_size": 16,
+                "line_height": 100,
+                "letter_spacing": 0,
                 "case": "none",
                 "color": "var(--color-foreground)",
                 "padding-block-start": 0,

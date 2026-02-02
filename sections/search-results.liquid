@@ -6,10 +6,9 @@
   fetchpriority="low"
 ></script>
 
-<div class="section-background color-{{ section.settings.color_scheme }}"></div>
-
+<div class="section-background color-{{ section.settings.color_scheme }} {% render 'animate', animation: section.settings.animation %}"></div>
 <results-list
-  class="section product-grid-container spacing-style color-{{ section.settings.color_scheme }}"
+  class="section product-grid-container spacing-style color-{{ section.settings.color_scheme }} {% render 'animate', animation: section.settings.animation %}"
   style="--padding-block-start: {{ section.settings.padding-block-start }}px; --padding-block-end: {{ section.settings.padding-block-end }}px;"
   section-id="{{ section.id }}"
   infinite-scroll="{{ section.settings.enable_infinite_scroll }}"
@@ -66,6 +65,26 @@
 {
   "name": "t:names.search_results",
   "settings": [
+    {
+      "type": "select",
+      "id": "animation",
+      "label": "Trigger animation",
+      "default": "slide-in",
+      "options": [
+        {
+          "value": "",
+          "label": "None"
+        },
+        {
+          "value": "fade-in",
+          "label": "FadeIn"
+        },
+        {
+          "value": "slide-in",
+          "label": "SlideIn"
+        }
+      ]
+    },
     {
       "type": "paragraph",
       "content": "t:content.edit_empty_state_collection_in_theme_settings"
@@ -239,6 +258,26 @@
       "step": 1,
       "unit": "px",
       "default": 8
+    },
+    {
+      "type": "range",
+      "id": "padding-block-start-mobile",
+      "label": "Top Mobile",
+      "min": -1,
+      "max": 99,
+      "step": 1,
+      "unit": "px",
+      "default": -1
+    },
+    {
+      "type": "range",
+      "id": "padding-block-end-mobile",
+      "label": "Bottom Mobile",
+      "min": -1,
+      "max": 99,
+      "step": 1,
+      "unit": "px",
+      "default": -1
     }
   ],
   "presets": []

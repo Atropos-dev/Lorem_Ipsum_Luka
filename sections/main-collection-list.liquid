@@ -5,16 +5,19 @@
   assign max_items = 20
 %}
 
-<div class="section-background color-{{ section.settings.color_scheme }}"></div>
+<div class="section-background color-{{ section.settings.color_scheme }} {{ section.settings.visibility }} {% render 'animate', animation: section.settings.animation %}"></div>
 
 <div
   class="
     section
+    section-mobile--{{ section.settings.section_width_mobile }}
     section--{{ section.settings.section_width }}
     color-{{ section.settings.color_scheme }}
     section-resource-list
     spacing-style
     gap-style
+    {{ section.settings.visibility }}
+    {% render 'animate', animation: section.settings.animation %}
   "
   style="
     {% render 'spacing-style', settings: section.settings %}
@@ -100,6 +103,45 @@
     "groups": ["header", "footer"]
   },
   "settings": [
+    {
+      "type": "select",
+      "id": "visibility",
+      "label": "t:content.visibility",
+      "options": [
+        {
+          "value": "",
+          "label": "Both"
+        },
+        {
+          "value": "hidden--mobile",
+          "label": "t:settings.desktop_only"
+        },
+        {
+          "value": "hidden--desktop",
+          "label": "t:settings.mobile_only"
+        }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "animation",
+      "label": "Trigger animation",
+      "default": "slide-in",
+      "options": [
+        {
+          "value": "",
+          "label": "None"
+        },
+        {
+          "value": "fade-in",
+          "label": "FadeIn"
+        },
+        {
+          "value": "slide-in",
+          "label": "SlideIn"
+        }
+      ]
+    },
     {
       "type": "header",
       "content": "t:content.cards_layout"
@@ -280,6 +322,22 @@
       ],
       "default": "page-width"
     },
+     {
+      "type": "select",
+      "id": "section_width_mobile",
+      "label": "t:settings.width_mobile",
+      "options": [
+        {
+          "value": "page-width",
+          "label": "t:options.page"
+        },
+        {
+          "value": "full-width",
+          "label": "t:options.full"
+        }
+      ],
+      "default": "page-width"
+    },
     {
       "type": "range",
       "id": "gap",
@@ -319,6 +377,26 @@
       "step": 1,
       "unit": "px",
       "default": 0
+    },
+     {
+      "type": "range",
+      "id": "padding-block-start-mobile",
+      "label": "Top Mobile",
+      "min": -1,
+      "max": 99,
+      "step": 1,
+      "unit": "px",
+      "default": -1
+    },
+    {
+      "type": "range",
+      "id": "padding-block-end-mobile",
+      "label": "Bottom Mobile",
+      "min": -1,
+      "max": 99,
+      "step": 1,
+      "unit": "px",
+      "default": -1
     }
   ]
 }

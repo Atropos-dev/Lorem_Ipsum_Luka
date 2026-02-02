@@ -30,6 +30,12 @@
   {{ block.shopify_attributes }}
 >
   {{ block_settings.label }}
+  {% if block_settings.icon_type != 'none' %}
+    <span class="svg-wrapper" aria-hidden="true">
+      {% assign icon_url = 'icon-' | append: block_settings.icon_type | append: '.svg' %}
+      {{ icon_url | inline_asset_content }}
+    </span>
+  {% endif %}
 </a>
 
 {% stylesheet %}

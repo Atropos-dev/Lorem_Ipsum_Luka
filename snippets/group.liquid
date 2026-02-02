@@ -16,9 +16,11 @@
     group-block
     group-block--height-{{ settings.height }}
     group-block--width-{{ settings.width }}
+    group-block--height-{{ settings.height_mobile }}-mobile
     border-style
     spacing-style
     size-style
+    {% render 'animate', animation: settings.animation %}
     {% if settings.inherit_color_scheme == false %} color-{{ settings.color_scheme }}{% endif %}
     {{ class }}
   "
@@ -49,6 +51,13 @@
       background_image: settings.background_image,
       background_image_position: settings.background_image_position,
       placeholder: settings.placeholder
+      hover_background_image: settings.hover_background_image
+      hover_background_image_position: settings.hover_background_image_position,
+      background_media_mobile: settings.background_media_mobile,
+      background_video_mobile: settings.video_mobile,
+      background_video_position_mobile: settings.video_position_mobile,
+      background_image_mobile: settings.background_image_mobile,
+      background_image_position_mobile: settings.background_image_position_mobile,
     %}
     {% if settings.toggle_overlay %}
       {% render 'overlay', settings: settings, layer: '0' %}
@@ -62,6 +71,8 @@
       layout-panel-flex
       layout-panel-flex--{{ settings.content_direction | default: 'column' }}
       {% if settings.vertical_on_mobile %} mobile-column{% endif %}
+      {% if settings.mobile_reverse %} mobile-reverse--{{ settings.content_direction }}{% endif %}
+
     "
     style="{% render 'layout-panel-style', settings: settings %}"
   >
@@ -86,5 +97,22 @@
   /* Needs the .group-block__link ~ to be specific enough to take effect. */
   .group-block__link ~ .group-block-content--design-mode {
     pointer-events: auto;
+  }
+
+  .group-block__media-wrapper .background-image-container:nth-of-type(2) {
+    opacity: 0;
+    transition: opacity var(--transition-duration) var(--transition-ease-type) var(--transition-delay);
+  }
+
+  .group-block:hover > .group-block__media-wrapper .background-image-container:nth-of-type(2) {
+    opacity: 1;
+  }  
+
+  .group-block:hover .overlay--solid {
+    background: var(--overlay-hover-color);
+  }
+
+  .group-block:hover .overlay--gradient {
+    background: linear-gradient(var(--overlay-direction), var(--overlay-hover-color), var(--overlay-hover-color--end));
   }
 {% endstylesheet %}

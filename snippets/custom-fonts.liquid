@@ -1,0 +1,49 @@
+{% comment %} Custom Fonts {% endcomment %}
+{% if settings.custom_body_font %}
+  {{ 'BrandBodyFont.woff2' | asset_url | preload_tag: as: 'font', type: 'font/woff2', crossorigin: 'anonymous' }}
+{% endif %}
+
+{% if settings.custom_heading_font %}
+  {{ 'BrandHeadingFont.woff2' | asset_url | preload_tag: as: 'font', type: 'font/woff2', crossorigin: 'anonymous' }}
+{% endif %}
+
+{% if settings.custom_subheading_font %}
+  {{ 'BrandSubheadingFont.woff2' | asset_url | preload_tag: as: 'font', type: 'font/woff2', crossorigin: 'anonymous' }}
+{% endif %}
+
+{% if settings.custom_accent_font %}
+  {{ 'BrandAccentFont.woff2' | asset_url | preload_tag: as: 'font', type: 'font/woff2', crossorigin: 'anonymous' }}
+{% endif %}
+<style>
+  {% if settings.custom_body_font %}
+    @font-face {
+      font-family: BrandBodyFont;
+      src: url("{{ 'BrandBodyFont.woff2' | asset_url }}") format('woff2');
+      font-display: swap;
+    }
+  {% endif %}
+
+  {% if settings.custom_heading_font %}
+    @font-face {
+      font-family: BrandHeadingFont;
+      src: url("{{ 'BrandHeadingFont.woff2' | asset_url }}") format('woff2');
+      font-display: swap;
+    }
+  {% endif %}
+
+  {% if settings.custom_subheading_font %}
+    @font-face {
+      font-family: BrandSubheadingFont;
+      src: url("{{ 'BrandSubheadingFont.woff2' | asset_url }}") format('woff2');
+      font-display: swap;
+    }
+  {% endif %}
+
+  {% if settings.custom_accent_font %}
+    @font-face {
+      font-family: BrandAccentFont;
+      src: url("{{ 'BrandAccentFont.woff2' | asset_url }}") format('woff2');
+      font-display: swap;
+    }
+  {% endif %}
+</style>

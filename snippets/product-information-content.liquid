@@ -76,9 +76,9 @@
   endcase
 %}
 
-<div class="section-background color-{{ settings.color_scheme }}"></div>
+<div class="section-background color-{{ section.settings.color_scheme }} {{ section.settings.visibility }} {% render 'animate', animation: section.settings.animation %}"></div>
 <div
-  class="product-information section section--{{ content_width }} spacing-style color-{{ settings.color_scheme }} relative"
+  class="product-information section section--{{ content_width }} spacing-style color-{{ section.settings.color_scheme }} relative {{ section.settings.visibility }} {% render 'animate', animation: section.settings.animation %}"
   style="{% render 'spacing-style', settings: settings %} --gap: {{ settings.gap }}px;"
   data-testid="product-information"
 >

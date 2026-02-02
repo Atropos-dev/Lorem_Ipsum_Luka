@@ -99,6 +99,7 @@ class HeaderComponent extends Component {
 
       if (alwaysSticky) {
         this.dataset.stickyState = isIntersecting ? 'inactive' : 'active';
+        document.body.classList.toggle('animation-sticky-header', !isIntersecting);
         if (this.dataset.themeColor) changeMetaThemeColor(this.dataset.themeColor);
       } else {
         this.#offscreen = !isIntersecting || this.dataset.stickyState === 'active';
@@ -175,10 +176,12 @@ class HeaderComponent extends Component {
         // reset sticky state when header is scrolled up to natural position
         this.#offscreen = false;
         this.dataset.stickyState = 'inactive';
+        document.body.classList.remove('animation-sticky-header');
         this.dataset.scrollDirection = 'none';
       } else {
         // show sticky header when scrolling up
         this.dataset.stickyState = 'active';
+        document.body.classList.add('animation-sticky-header');
         this.dataset.scrollDirection = 'up';
       }
     } else if (this.dataset.stickyState === 'active') {

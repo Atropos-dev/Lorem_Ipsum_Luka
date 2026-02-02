@@ -103,6 +103,18 @@
   fetchpriority="low"
 >
 <script
+  src="{{ 'animate.js' | asset_url }}"
+  type="module"
+  fetchpriority="low"
+></script>
+
+<script
+  src="{{ 'lazy-video.js' | asset_url }}"
+  defer
+  fetchpriority="low"
+></script>
+
+<script
   src="{{ 'popover-polyfill.js' | asset_url }}"
   type="module"
   fetchpriority="low"

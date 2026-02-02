@@ -7,8 +7,18 @@
     <div
       class="product-badges product-badges--{{ settings.badge_position }}"
       style="
+        --badge-padding-block: {{ settings.badge_padding_block }}px;
+        --badge-padding-inline: {{ settings.badge_padding_inline }}px;
+        --badge-padding-block-mobile: {{ settings.mobile_badge_padding_block }}px;
+        --badge-padding-inline-mobile: {{ settings.mobile_badge_padding_inline }}px;
         --badge-border-radius: {{ settings.badge_corner_radius }}px;
-        --badge-font-family: var(--font-{{ settings.badge_font_family }}--family); --badge-font-weight: var(--font-{{ settings.badge_font_family }}--weight); --badge-text-transform: {{ settings.badge_text_transform }};
+        --badge-font-family: var(--font-{{ settings.badge_font_family }}--family);
+        --badge-font-weight: {{ settings.badge_font_weight }};
+        --badge-text-transform: {{ settings.badge_text_transform }};
+        --badge-font-size: {{ settings.badge_font_size }}px;
+        --badge-font-size-mobile: {{ settings.mobile_badge_font_size }}px;
+        --badge-font-line-height: {{ settings.badge_font_line_height }}%;
+        --badge-font-letter-spacing: {{ settings.badge_font_letter_spacing | divided_by: 100.0 }}em;
       "
     >
       {%- if product.available == false or product.compare_at_price > product.price -%}
@@ -25,6 +35,18 @@
           {%- endif -%}
         </div>
       {%- endif -%}
+      {% if product.metafields.custom.tags != blank %}
+        {% for tag in product.metafields.custom.tags.value %}
+          <div class="product-badges__badge product-badges__badge--rectangle" style="background-color: {{ tag.bg_color }};color: {{ tag.text_color }};">
+            {{ tag.label }}
+            {% if tag.icon != blank %}
+              <span class="product-badges__badge-icon">
+                {{ tag.icon | image_url: width: 50 | image_tag }}
+              </span>
+            {% endif %}
+          </div>
+        {% endfor %}
+      {% endif %}
     </div>
     {%  if settings.quick_add or settings.mobile_quick_add %}
       {% render 'quick-add', product: product, section_id: section.id %}
@@ -49,6 +71,9 @@
 
     position: absolute;
     z-index: var(--layer-flat);
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--gap-3xs);
   }
 
   .product-badges--bottom-left {
@@ -67,24 +92,35 @@
   }
 
   .product-badges__badge {
-    --badge-font-size: var(--font-size--xs);
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    color: var(--color-foreground);
-    background: var(--color-background);
-    font-size: var(--badge-font-size);
-    font-family: var(--badge-font-family);
-    font-weight: var(--badge-font-weight);
-    text-transform: var(--badge-text-transform);
-    border-radius: var(--badge-border-radius);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      color: var(--color-foreground);
+      background: var(--color-background);
+      font-size: var(--badge-font-size);
+      font-family: var(--badge-font-family);
+      font-weight: var(--badge-font-weight);
+      line-height: var(--badge-font-line-height);
+      letter-spacing: var(--badge-font-letter-spacing);
+      text-transform: var(--badge-text-transform);
+      border-radius: var(--badge-border-radius);
+      gap: var(--gap-3xs);
+      padding-block: var(--badge-padding-block);
+      padding-inline: var(--badge-padding-inline);
   }
 
-  .product-badges__badge--rectangle {
-    padding-block: var(--badge-rectangle-padding-block);
-    padding-inline: var(--badge-rectangle-padding-inline);
+  @media (max-width: 749px) {
+    .product-badges__badge {
+      font-size: var(--badge-font-size-mobile);
+      padding-block: var(--badge-padding-block-mobile);
+      padding-inline: var(--badge-padding-inline-mobile);
+    }
+  }
+
+  .product-badges__badge-icon {
+    display: flex;
+    width: 16px;
   }
 {% endstylesheet %}
 
@@ -217,6 +253,46 @@
       "step": 1,
       "unit": "px",
       "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding-block-start-mobile",
+      "label": "Top Mobile",
+      "min": -1,
+      "max": 99,
+      "step": 1,
+      "unit": "px",
+      "default": -1
+    },
+    {
+      "type": "range",
+      "id": "padding-block-end-mobile",
+      "label": "Bottom Mobile",
+      "min": -1,
+      "max": 99,
+      "step": 1,
+      "unit": "px",
+      "default": -1
+    },
+    {
+      "type": "range",
+      "id": "padding-inline-start-mobile",
+      "label": "Left Mobile",
+      "min": -1,
+      "max": 99,
+      "step": 1,
+      "unit": "px",
+      "default": -1
+    },
+    {
+      "type": "range",
+      "id": "padding-inline-end-mobile",
+      "label": "Right Mobile",
+      "min": -1,
+      "max": 99,
+      "step": 1,
+      "unit": "px",
+      "default": -1
     }
   ],
   "presets": [

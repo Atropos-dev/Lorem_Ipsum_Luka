@@ -31,14 +31,14 @@
   endif
 
   # Define breakpoints and max widths based on page width setting
-  case settings.page_width
-    when 'narrow'
+ case settings.page_width
+    when settings.page_width < 90
       assign page_max_width = '90rem'
       assign breakpoint = '95rem'
-    when 'normal'
+    when settings.page_width < 120
       assign page_max_width = '120rem'
       assign breakpoint = '125rem'
-    when 'wide'
+    when settings.page_width < 150
       assign page_max_width = '150rem'
       assign breakpoint = '155rem'
   endcase
