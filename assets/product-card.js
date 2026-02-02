@@ -1,7 +1,7 @@
-import { OverflowList } from '@theme/overflow-list';
+import { OverflowList } from '@theme/critical';
 import VariantPicker from '@theme/variant-picker';
 import { Component } from '@theme/component';
-import { debounce, isDesktopBreakpoint, mediaQueryLarge, yieldToMainThread } from '@theme/utilities';
+import { debounce, isDesktopBreakpoint, mediaQueryLarge, requestYieldCallback } from '@theme/utilities';
 import { ThemeEvents, VariantSelectedEvent, VariantUpdateEvent, SlideshowSelectEvent } from '@theme/events';
 import { morph } from '@theme/morph';
 
@@ -408,16 +408,15 @@ export class ProductCard extends Component {
     const productCardAnchor = link.getAttribute('id');
     if (!productCardAnchor) return;
 
-    const infiniteResultsList = this.closest('results-list[infinite-scroll="true"]');
-    if (!window.Shopify.designMode && infiniteResultsList) {
-      const url = new URL(window.location.href);
-      const parent = this.closest('li');
-      url.hash = productCardAnchor;
-      if (parent && parent.dataset.page) {
-        url.searchParams.set('page', parent.dataset.page);
-      }
+    const url = new URL(window.location.href);
+    const parent = this.closest('li');
+    url.hash = productCardAnchor;
+    if (parent && parent.dataset.page) {
+      url.searchParams.set('page', parent.dataset.page);
+    }
 
-      yieldToMainThread().then(() => {
+    if (!window.Shopify.designMode) {
+      requestYieldCallback(() => {
         history.replaceState({}, '', url.toString());
       });
     }
@@ -441,10 +440,10 @@ if (!customElements.get('product-card')) {
 
 /**
  * A custom element that displays a variant picker with swatches.
- * @typedef {import('@theme/variant-picker').VariantPickerRefs & {overflowList: HTMLElement}} SwatchesRefs
- */
-
-/**
+ *
+ * @typedef {object} SwatchesRefs
+ * @property {HTMLElement} overflowList
+ *
  * @extends {VariantPicker<SwatchesRefs>}
  */
 class SwatchesVariantPickerComponent extends VariantPicker {

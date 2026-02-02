@@ -4,13 +4,14 @@
   @param {string} icon - The icon name from block.settings.icon
   @param {object} image_upload - The uploaded image from block.settings.image_upload
   @param {number} width - The width setting from block.settings.width
+  @param {number} mb_width - The width setting from block.settings.mb_width
   @param {string} class_name - CSS class name for the rendered element
   @param {object} [attributes] - Additional HTML attributes to add to the element
 {%- enddoc -%}
 
 {%- if icon != 'none' and image_upload == blank -%}
   <svg
-    class="{{ class_name | append: ' icon-default' | strip }}"
+    class="{{ class_name }}"
     aria-hidden="true"
     focusable="false"
     xmlns="http://www.w3.org/2000/svg"
@@ -31,10 +32,26 @@
     assign widths = '240, 352, 832, 1200'
   %}
 
-  {% assign image_style = 'width: ' | append: width | append: 'px;' %}
+  {% assign image_style = 
+  '--img-width-desktop:' | append: width | append: 'px;' | append:
+  '--img-width-mobile:' | append: mb_width | append: 'px;'
+  %}
   {{
     image_upload
     | image_url: width: 1200
     | image_tag: widths: widths, class: class_name, style: image_style, sizes: sizes
   }}
 {%- endif -%}
+
+
+{%  style  %} 
+.marquee__content img {
+  width: var(--img-width-desktop);
+}
+
+@media (max-width: 425px) {
+  .marquee__content img {
+    width: var(--img-width-mobile);
+  }
+}
+{% endstyle %}

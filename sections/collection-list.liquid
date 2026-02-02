@@ -1,5 +1,3 @@
-
-
 {% liquid
   if section.settings.collection_list != blank
     assign section_collections = section.settings.collection_list
@@ -35,7 +33,6 @@
     {% render 'spacing-style', settings: section.settings %}
     {% render 'gap-style', value: section.settings.gap %}
   "
-  data-testid="collection-list"
 >
   <div class="section-resource-list__content">
     {%- content_for 'blocks' -%}
@@ -116,7 +113,7 @@
     "groups": ["header", "footer"]
   },
   "settings": [
-     {
+    {
       "type": "select",
       "id": "visibility",
       "label": "t:content.visibility",
@@ -357,7 +354,7 @@
       ],
       "default": "page-width"
     },
-     {
+    {
       "type": "select",
       "id": "section_width_mobile",
       "label": "t:settings.width_mobile",
@@ -483,12 +480,9 @@
               "type": "text",
               "name": "t:names.text",
               "settings": {
-                "text": "t:html_defaults.shop_by_collection",
+                "text": "<h3>Shop by collection</h3>",
                 "type_preset": "rte",
                 "font": "var(--font-body--family)",
-                "font_size": 16,
-                "line_height": 100,
-                "letter_spacing": 0,
                 "case": "none",
                 "wrap": "pretty",
                 "width": "fit-content",
@@ -533,9 +527,6 @@
               "settings": {
                 "type_preset": "rte",
                 "font": "var(--font-body--family)",
-                "font_size": 16,
-                "line_height": 100,
-                "letter_spacing": 0,
                 "case": "none",
                 "wrap": "pretty",
                 "width": "fit-content",
@@ -595,12 +586,9 @@
               "type": "text",
               "name": "t:names.text",
               "settings": {
-                "text": "t:html_defaults.shop_by_collection",
+                "text": "<h3>Shop by collection</h3>",
                 "type_preset": "rte",
                 "font": "var(--font-body--family)",
-                "font_size": 16,
-                "line_height": 100,
-                "letter_spacing": 0,
                 "case": "none",
                 "wrap": "pretty",
                 "width": "fit-content",
@@ -645,9 +633,6 @@
               "settings": {
                 "type_preset": "rte",
                 "font": "var(--font-body--family)",
-                "font_size": 16,
-                "line_height": 100,
-                "letter_spacing": 0,
                 "case": "none",
                 "wrap": "pretty",
                 "width": "fit-content",
@@ -723,12 +708,9 @@
               "type": "text",
               "name": "t:names.text",
               "settings": {
-                "text": "t:html_defaults.shop_by_collection",
+                "text": "<h3>Shop by collection</h3>",
                 "type_preset": "rte",
                 "font": "var(--font-body--family)",
-                "font_size": 16,
-                "line_height": 100,
-                "letter_spacing": 0,
                 "case": "none",
                 "wrap": "pretty",
                 "width": "fit-content",
@@ -773,9 +755,6 @@
               "settings": {
                 "type_preset": "rte",
                 "font": "var(--font-body--family)",
-                "font_size": 16,
-                "line_height": 100,
-                "letter_spacing": 0,
                 "case": "none",
                 "wrap": "pretty",
                 "width": "fit-content",
@@ -856,15 +835,12 @@
               "type": "text",
               "name": "t:names.text",
               "settings": {
-                "text": "t:html_defaults.shop_by_collection",
+                "text": "<h3>Shop by collection</h3>",
                 "width": "fit-content",
                 "max_width": "normal",
                 "alignment": "left",
                 "type_preset": "rte",
                 "font": "var(--font-body--family)",
-                "font_size": 16,
-                "line_height": 100,
-                "letter_spacing": 0,
                 "case": "none",
                 "wrap": "pretty",
                 "color": "var(--color-foreground)",
@@ -907,9 +883,6 @@
                 "alignment": "left",
                 "type_preset": "h5",
                 "font": "var(--font-body--family)",
-                "font_size": 16,
-                "line_height": 100,
-                "letter_spacing": 0,
                 "case": "none",
                 "wrap": "pretty",
                 "color": "var(--color-foreground)",

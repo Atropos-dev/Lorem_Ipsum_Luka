@@ -29,6 +29,11 @@
       if block_settings.max_width == 'none'
         echo ' text-block--full-width '
       endif
+
+      echo 'text-block--align-mobile-' | append: block_settings.alignment
+      if block_settings.max_width == 'none'
+        echo ' text-block--full-width '
+      endif
     endif
     if block_settings.type_preset == 'custom'
       echo ' custom-typography '
@@ -57,9 +62,14 @@
     {% render 'spacing-padding', settings: block_settings %}
     {% render 'typography-style', settings: block_settings %}
     --width: {{ text_width }};
-    --max-width: var(--max-width--{{ type }}-{{ block_settings.max_width }});
+    {% if block_settings.max_width == 'custom' %}
+      --max-width: {{ block_settings.max_width_custom }}px;
+    {% else %}
+      --max-width: var(--max-width--{{ type }}-{{ block_settings.max_width }});
+    {% endif %}
     {% if text_width == "100%" %}
       --text-align: {{ block_settings.alignment }};
+      --text-align-mobile: {{ block_settings.mobile_alignment }};
     {% endif %}
     {% if block_settings.background %}
       --text-background-color: {{ block_settings.background_color | default: 'rgb(255 255 255 / 1.0)' }};
@@ -70,7 +80,6 @@
 
   {{ block.shopify_attributes }}
 {% endcapture %}
-
 {% liquid
   # {{ attributes }} must be on the immediate HTML parent of the text to preserve
   # the click-to-edit connection in the theme editor. Any break between the text,
@@ -83,12 +92,27 @@
 %}
 
 {% if fallback_text != blank and plain_text == blank %}
-  <div {{ attributes | strip_newlines | strip }}>
+  <div {{ attributes }}>
     {{ fallback_text }}
   </div>
 {% elsif plain_text != blank %}
-  <{{ element }} {{ attributes | strip_newlines | strip }}>
-    {{ block.settings.text }}
+  <{{ element }} {{ attributes }}>
+  <div class="text-wrapper {% if block.settings.mobile_text != blank %}has-mobile-text{% endif %}" 
+  style="{% if block.settings.color_gradient  %}background: linear-gradient(135deg,
+      {{ block.settings.gradient_start }},
+      {{ block.settings.gradient_end }});
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    {% endif %}">
+    <div class="desktop-text" style="{%if block.settings.text_underline %}  text-decoration: underline;{% endif %}">
+      {{ block.settings.text }}
+    </div>
+    {% if block.settings.mobile_text != blank %}
+      <div class="mobile-text" style="{%if block.settings.text_underline %}  text-decoration: underline;{% endif %}">
+        {{ block.settings.mobile_text }}
+      </div>
+    {% endif %}
+  </div>
   </{{ element }}>
 {% endif %}
 
@@ -127,9 +151,13 @@
 
   .text-block > * {
     width: var(--width);
-    max-inline-size: min(100%, var(--max-width, 100%));
+    max-width: var(--max-width, 100%);
     text-align: var(--text-align, var(--text-align-default));
     text-wrap: var(--text-wrap);
+  }
+
+  .text-block > p {
+    max-width: var(--max-width);
   }
 
   .text-block:not(.text-block--full-width).rte,
@@ -148,39 +176,9 @@
     text-decoration-color: transparent;
   }
 
-  .text-block h1,
-  .text-block.h1 > * {
-    margin-block: var(--font-h1--spacing);
-  }
-
-  .text-block h2,
-  .text-block.h2 > * {
-    margin-block: var(--font-h2--spacing);
-  }
-
-  .text-block h3,
-  .text-block.h3 > * {
-    margin-block: var(--font-h3--spacing);
-  }
-
-  .text-block h4,
-  .text-block.h4 > * {
-    margin-block: var(--font-h4--spacing);
-  }
-
-  .text-block h5,
-  .text-block.h5 > * {
-    margin-block: var(--font-h5--spacing);
-  }
-
-  .text-block h6,
-  .text-block.h6 > * {
-    margin-block: var(--font-h6--spacing);
-  }
-
   .text-block p,
   .text-block.p > * {
-    margin-block: var(--font-paragraph--spacing);
+    /* margin-block: var(--font-paragraph--spacing); */
   }
 
   .text-block > *:first-child {
@@ -216,4 +214,61 @@
   .custom-color > :is(h1, h2, h3, h4, h5, h6, p, *) {
     color: var(--color);
   }
+  
+  @media screen and (max-width: 767px) {
+    .text-block {
+      width: var(--width);
+      max-width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: var(--horizontal-alignment-mobile);
+    }
+
+    .text-block > * {
+      width: var(--width);
+      max-width: var(--max-width, 100%);
+      text-align: var(--text-align-mobile, var(--text-align-default));
+      text-wrap: var(--text-wrap);
+    }
+
+    [style*='--horizontal-alignment-mobile: flex-end'] .text-block {
+    --text-align-default: right;
+    }
+
+    [style*='--horizontal-alignment-mobile: flex-start'] > .text-block {
+      --text-align-default: left;
+    }
+
+    [style*='--horizontal-alignment-mobile: center'] > .text-block {
+      --text-align-default: center;
+    }
+
+    [style*='--horizontal-alignment-mobile: flex-end'] > .text-block {
+      --text-align-default: right;
+    }
+  }
+
+  /* Default (desktop) */
+.desktop-text {
+  display: block;
+
+  ul {
+    margin-block-end: 0 !important;
+  }
+}
+
+.mobile-text {
+  display: none;
+}
+
+/* Mobile */
+@media (max-width: 425px) {
+  .has-mobile-text .desktop-text {
+    display: none;
+  }
+
+  .has-mobile-text .mobile-text {
+    display: block;
+  }
+}
 {% endstylesheet %}

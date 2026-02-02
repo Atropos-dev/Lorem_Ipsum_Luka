@@ -1,8 +1,12 @@
-
-
-<div>
+<div class="custom-logo__container">
   {{ block.settings.custom_liquid }}
 </div>
+
+{% stylesheet %}
+  .custom-logo__container svg {
+    height: fit-content;
+  }
+{% endstylesheet %}
 
 {% schema %}
 {

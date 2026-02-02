@@ -1,4 +1,3 @@
-
 <div class="section-background color-{{ section.settings.color_scheme }} {{ section.settings.visibility }} {% render 'animate', animation: section.settings.animation %}"></div>
 <div class="section color-{{ section.settings.color_scheme }} {{ section.settings.visibility }} {% render 'animate', animation: section.settings.animation %}">
   <div
@@ -20,12 +19,9 @@
     </header>
 
     {%- if article.image -%}
-      {%- content_for 'block', id: 'blog-post-image', type: '_blog-post-featured-image' %}
+      {%- content_for 'block', id: 'blog-post-image', type: '_blog-post-featured-image', image: article.image %}
     {%- endif -%}
     {%- content_for 'block', id: 'blog-post-content', type: '_blog-post-content' %}
-
-    {% comment %} Dynamic area for @app blocks only, at the bottom {% endcomment %}
-    {% content_for 'blocks' %}
 
     {% if blog.comments_enabled? %}
       <div class="blog-post-comments-container">
@@ -114,17 +110,9 @@
 {% schema %}
 {
   "name": "t:names.blog_post",
-  "blocks": [
-    {
-      "type": "@theme"
-    },
-    {
-      "type": "@app"
-    }
-  ],
   "class": "section-wrapper",
   "settings": [
-        {
+    {
       "type": "select",
       "id": "visibility",
       "label": "t:content.visibility",

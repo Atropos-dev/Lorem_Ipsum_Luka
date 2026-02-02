@@ -1,5 +1,3 @@
-
-
 {%- doc -%}
   Renders a heading block.
 
@@ -26,6 +24,14 @@
         {
           "value": "paragraph",
           "label": "t:options.paragraph"
+        },
+        {
+          "value": "body1",
+          "label": "t:options.body1"
+        },
+        {
+          "value": "body2",
+          "label": "t:options.body2"
         },
         {
           "value": "h1",
@@ -80,7 +86,7 @@
           "value": "var(--font-accent--family)",
           "label": "t:options.accent"
         },
-         {
+        {
           "value": "var(--font-nav--family)",
           "label": "t:options.nav"
         }
@@ -112,7 +118,7 @@
     },
     {
       "type": "select",
-      "id": "font_weight",
+      "id": "weight",
       "label": "t:settings.weight",
       "default": "400",
       "options": [
@@ -261,6 +267,50 @@
       "label": "t:settings.show_alignment",
       "default": true,
       "visible_if": "{{ false }}"
+    },
+    {
+      "type": "header",
+      "content": "t:content.padding"
+    },
+    {
+      "type": "range",
+      "id": "padding-block-start",
+      "label": "t:settings.top",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding-block-end",
+      "label": "t:settings.bottom",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding-inline-start",
+      "label": "t:settings.left",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding-inline-end",
+      "label": "t:settings.right",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 0
     },
     {
       "type": "range",

@@ -27,3 +27,18 @@
   {%- render 'slideshow-arrow', action: 'previous', icon_style: icon_style, icon_shape: icon_shape -%}
   {%- render 'slideshow-arrow', action: 'next', icon_style: icon_style, icon_shape: icon_shape -%}
 </slideshow-arrows>
+
+
+{% stylesheet %}
+  @media screen and (max-width: 767px) {
+    .custom-carousel-wrapper.desktop-navigation slideshow-arrows {
+      display: none;
+    }
+  }
+
+  @media screen and (min-width: 768px) {
+    .custom-carousel-wrapper.mobile-navigation slideshow-arrows {
+      display: none;
+    }
+  }
+{% endstylesheet %}

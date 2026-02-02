@@ -1,5 +1,3 @@
-
-
 {% if section.blocks.size > 1 %}
   <script
     src="{{ 'announcement-bar.js' | asset_url }}"
@@ -120,11 +118,19 @@
     position: absolute;
     inset: 0;
   }
+
+  .header-announcement__bar {
+    position: fixed !important;
+    width: 100%;
+    top: 0;
+    z-index: 10 !important;
+  }
 {% endstylesheet %}
 
 {% schema %}
 {
   "name": "t:names.announcement_bar",
+  "class": "header-announcement__bar",
   "blocks": [
     {
       "type": "_announcement"
@@ -134,7 +140,7 @@
     "groups": ["header"]
   },
   "settings": [
-  {
+    {
       "type": "select",
       "id": "visibility",
       "label": "t:content.visibility",

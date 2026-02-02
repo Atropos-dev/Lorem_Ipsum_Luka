@@ -1,5 +1,3 @@
-
-
 <script
   src="{{ 'marquee.js' | asset_url }}"
   type="module"
@@ -77,6 +75,9 @@
     gap: var(--marquee-gap);
     align-items: center;
     justify-content: center;
+    @media (max-width: 425px) {
+      gap: 24px;
+    }
   }
 
   .marquee__repeated-items > * {
@@ -220,12 +221,12 @@
         "text": {
           "type": "text",
           "settings": {
-            "text": "t:html_defaults.make_things_better",
+            "text": "<p>We make things that work better and last longer.</p>",
             "type_preset": "custom",
             "font": "var(--font-body--family)",
-           "font_size": "24",
-            "line_height": "100",
-            "letter_spacing": "0",
+            "font_size": 24,
+            "line_height": 100,
+            "letter_spacing": 0,
             "case": "none",
             "wrap": "nowrap",
             "width": "fit-content"

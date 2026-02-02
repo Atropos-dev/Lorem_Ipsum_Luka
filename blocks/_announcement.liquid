@@ -1,5 +1,3 @@
-
-
 {%- assign block_settings = block.settings -%}
 {%- assign plain_text = block_settings.text | strip_newlines | strip_html | strip -%}
 {%- assign block_index = section.blocks | find_index: 'id', block.id -%}
@@ -21,7 +19,6 @@
       {% render 'typography-style', settings: block_settings, preset: 'custom' %}
       --width: 100%;
       --text-align: center;
-      --line-height: 1;
     "
     {{ block.shopify_attributes }}
     aria-hidden="{% if block_index == 0 %}false{% else %}true{% endif %}"
@@ -44,6 +41,17 @@
 {%- endunless -%}
 
 {% stylesheet %}
+  .text-block {
+    width: var(--width);
+    max-width: 100%;
+  }
+
+  .text-block > * {
+    width: var(--width);
+    max-width: var(--max-width, 100%);
+    text-align: var(--text-align);
+  }
+
   .text-block:not(.text-block--full-width).rte,
   .text-block:not(.text-block--full-width).paragraph {
     /* Safari doesn't support pretty, so fallback to balance */
@@ -65,36 +73,6 @@
     text-decoration-color: transparent;
   }
 
-  .text-block h1,
-  .text-block.h1 > * {
-    margin-block: var(--font-h1--spacing);
-  }
-
-  .text-block h2,
-  .text-block.h2 > * {
-    margin-block: var(--font-h2--spacing);
-  }
-
-  .text-block h3,
-  .text-block.h3 > * {
-    margin-block: var(--font-h3--spacing);
-  }
-
-  .text-block h4,
-  .text-block.h4 > * {
-    margin-block: var(--font-h4--spacing);
-  }
-
-  .text-block h5,
-  .text-block.h5 > * {
-    margin-block: var(--font-h5--spacing);
-  }
-
-  .text-block h6,
-  .text-block.h6 > * {
-    margin-block: var(--font-h6--spacing);
-  }
-
   .text-block > *:first-child {
     margin-block-start: 0;
   }
@@ -112,6 +90,26 @@
   .text-block--align-right > * {
     margin-inline-start: auto;
   }
+
+  .announcement-bar__text {
+    /* cursor: pointer; */
+    cursor: url("https://cdn.shopify.com/s/files/1/0846/8116/2808/files/hover-cursor.svg?v=1767750465"), auto !important;
+  }
+
+  .announcement-bar__text:hover {
+    text-decoration: underline;
+  }
+  
+  @media (max-width: 768px) {
+      .text-block .announcement-bar__text {
+        text-align: center;
+      }
+    }
+  @media (max-width: 376px) {
+    .text-block .announcement-bar__text {
+        padding: 0 25px;
+      }
+    }
 {% endstylesheet %}
 
 {% schema %}
@@ -162,7 +160,7 @@
       ],
       "default": "var(--font-body--family)"
     },
-     {
+    {
       "type": "range",
       "id": "font_size",
       "label": "t:settings.size",
@@ -184,9 +182,9 @@
     },
     {
       "type": "select",
-      "id": "font_weight",
+      "id": "weight",
       "label": "t:settings.weight",
-      "default": "400",
+      "default": "700",
       "options": [
         {
           "value": "100",

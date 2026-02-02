@@ -18,7 +18,30 @@
   {% if settings.custom_body_font %}
     @font-face {
       font-family: BrandBodyFont;
-      src: url("{{ 'BrandBodyFont.woff2' | asset_url }}") format('woff2');
+      src: url("{{ 'MDPrimer-Light.woff2' | asset_url }}") format('woff2');
+      font-style: normal;
+      font-weight: 300;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: BrandBodyFont;
+      src: url("{{ 'MDPrimer-LightItalic.woff2' | asset_url }}") format('woff2');
+      font-style: italic;
+      font-weight: 300;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: BrandBodyFont;
+      src: url("{{ 'MDPrimer-Italic.woff2' | asset_url }}") format('woff2');
+      font-style: italic;
+      font-weight: 400;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: BrandBodyFont;
+      src: url("{{ 'MDPrimer-Regular.woff2' | asset_url }}") format('woff2');
+      font-style: normal;
+      font-weight: 400;
       font-display: swap;
     }
   {% endif %}
@@ -26,7 +49,44 @@
   {% if settings.custom_heading_font %}
     @font-face {
       font-family: BrandHeadingFont;
-      src: url("{{ 'BrandHeadingFont.woff2' | asset_url }}") format('woff2');
+      src: url("{{ 'MDPrimer-Black.woff2' | asset_url }}") format('woff2');
+      font-style: normal;
+      font-weight: 800;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: BrandHeadingFont;
+      src: url("{{ 'MDPrimer-BlackItalic.woff2' | asset_url }}") format('woff2');
+      font-style: italic;
+      font-weight: 800;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: BrandHeadingFont;
+      src: url("{{ 'MDPrimer-Bold.woff2' | asset_url }}") format('woff2');
+      font-style: normal;
+      font-weight: 700;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: BrandHeadingFont;
+      src: url("{{ 'MDPrimer-BoldItalic.woff2' | asset_url }}") format('woff2');
+      font-style: italic;
+      font-weight: 700;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: BrandHeadingFont;
+      src: url("{{ 'MDPrimer-Semibold.woff2' | asset_url }}") format('woff2');
+      font-style: normal;
+      font-weight: 600;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: BrandHeadingFont;
+      src: url("{{ 'MDPrimer-SemiboldItalic.woff2' | asset_url }}") format('woff2');
+      font-style: italic;
+      font-weight: 600;
       font-display: swap;
     }
   {% endif %}

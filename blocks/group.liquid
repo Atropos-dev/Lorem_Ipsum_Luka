@@ -1,6 +1,4 @@
-
-
-{%- capture children %}
+{% capture children %}
   {% content_for 'blocks' %}
 {% endcapture %}
 
@@ -278,6 +276,27 @@
       "unit": "%",
       "default": 100,
       "visible_if": "{{ block.settings.width_mobile == 'custom' }}"
+    },    
+    {
+      "type": "select",
+      "id": "align_mobile",
+      "label": "Align",
+      "options": [
+        {
+          "value": "left",
+          "label": "left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }     
+      ],
+      "default": "center",
+      "visible_if": "{{ block.settings.width_mobile == 'custom' }}"
     },
     {
       "type": "select",
@@ -321,11 +340,11 @@
       "type": "range",
       "id": "custom_height_pixel",
       "label": "t:settings.custom_height",
-      "min": 100,
-      "max": 600,
-      "step": 5,
+      "min": 400,
+      "max": 1200,
+      "step": 10,
       "unit": "px",
-      "default": 400,
+      "default": 1200,
       "visible_if": "{{ block.settings.height == 'custom' and block.settings.set_pixel_custom_height == true }}"
     },
     {
@@ -371,11 +390,28 @@
       "id": "custom_height_pixel_mobile",
       "label": "t:settings.custom_height",
       "min": 100,
-      "max": 600,
-      "step": 5,
+      "max": 1000,
+      "step": 10,
       "unit": "px",
-      "default": 400,
+      "default": 990,
       "visible_if": "{{ block.settings.height_mobile == 'custom' and block.settings.set_pixel_custom_height_mobile == true }}"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_aspect_ratio",
+      "label": "Enable aspect ratio",
+      "default": false
+    },
+    {
+      "type": "range",
+      "id": "aspect_ratio",
+      "label": "Aspect ratio",
+      "min": 0,
+      "max": 200,
+      "step": 2,
+      "unit": "%",
+      "default": 100,
+      "visible_if": "{{ block.settings.enable_aspect_ratio }}"
     },
     {
       "type": "header",
@@ -610,7 +646,7 @@
       "default": "#00000026",
       "visible_if": "{{ block.settings.toggle_overlay }}"
     },
-        {
+    {
       "type": "color",
       "id": "overlay_hover_color",
       "label": "t:settings.overlay_hover_color",

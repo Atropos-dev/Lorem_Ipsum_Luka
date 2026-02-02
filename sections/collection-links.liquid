@@ -1,5 +1,3 @@
-
-
 {% liquid
   assign collection_list = section.settings.collection_list
 
@@ -137,11 +135,9 @@
       grid-template-columns: 1fr var(--template-column-ratio);
       grid-template-areas: 'text image';
 
-      @media (min-width: 749px) {
-        &[reverse] {
-          grid-template-areas: 'image text';
-          grid-template-columns: var(--template-column-ratio) 1fr;
-        }
+      &[reverse] {
+        grid-template-areas: 'image text';
+        grid-template-columns: var(--template-column-ratio) 1fr;
       }
 
       .collection-links__container {

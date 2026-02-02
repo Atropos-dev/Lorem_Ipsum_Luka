@@ -22,7 +22,11 @@
     {{ block_settings.style_class }}
     {{ block_settings.style_class }}--{{ block.id }}
   "
-  style="{% render 'size-style', settings: block_settings %}"
+  style="{% render 'size-style', settings: block_settings %} 
+  background: linear-gradient(135deg,
+      {{ block.settings.gradient_start }},
+      {{ block.settings.gradient_end }}
+    );"
   {%- if block_settings.open_in_new_tab -%}
     target="_blank"
     rel="noopener noreferrer"

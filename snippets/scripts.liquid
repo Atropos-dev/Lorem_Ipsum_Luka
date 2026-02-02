@@ -1,7 +1,7 @@
 <script type="importmap">
   {
     "imports": {
-      "@theme/overflow-list": "{{ 'overflow-list.js' | asset_url }}",
+      "@theme/critical": "{{ 'critical.js' | asset_url }}",
       "@theme/product-title": "{{ 'product-title-truncation.js' | asset_url }}",
       "@theme/component": "{{ 'component.js' | asset_url }}",
       "@theme/dialog": "{{ 'dialog.js' | asset_url }}",
@@ -20,22 +20,31 @@
       "@theme/media-gallery": "{{ 'media-gallery.js' | asset_url }}",
       "@theme/quick-add": "{{ 'quick-add.js' | asset_url }}",
       "@theme/paginated-list-aspect-ratio": "{{ 'paginated-list-aspect-ratio.js' | asset_url }}",
-      "@theme/popover-polyfill": "{{ 'popover-polyfill.js' | asset_url }}",
-      "@theme/component-quantity-selector": "{{ 'component-quantity-selector.js' | asset_url }}",
-      "@theme/comparison-slider": "{{ 'comparison-slider.js' | asset_url }}",
-      "@theme/sticky-add-to-cart": "{{ 'sticky-add-to-cart.js' | asset_url }}",
-      "@theme/fly-to-cart": "{{ 'fly-to-cart.js' | asset_url }}"
+      "@theme/popover-polyfill": "{{ 'popover-polyfill.js' | asset_url }}"
     }
   }
 </script>
 
+<script src='https://cdn.jsdelivr.net/npm/embla-carousel/embla-carousel.umd.js' defer='defer'></script>
 <script
-  src="{{ 'view-transitions.js' | asset_url }}"
-  async
-  {% if settings.page_transition_enabled or settings.transition_to_main_product %}
-    blocking="render"
-  {% endif %}
+  src='https://cdn.jsdelivr.net/npm/embla-carousel-autoplay/embla-carousel-autoplay.umd.js'
+  defer='defer'
 ></script>
+
+{% if settings.transition_to_main_product %}
+  {% # theme-check-disable ParserBlockingScript %}
+  <script
+    src="{{ 'view-transitions.js' | asset_url }}"
+    async
+    blocking="render"
+  ></script>
+  {% # theme-check-enable %}
+{% endif %}
+
+<link
+  rel="modulepreload"
+  href="{{ 'critical.js' | asset_url }}"
+>
 
 <link
   rel="modulepreload"
@@ -62,6 +71,7 @@
   href="{{ 'morph.js' | asset_url }}"
   fetchpriority="low"
 >
+
 
 {% if template.name == 'collection' or template.name == 'search' %}
   <link
@@ -107,20 +117,8 @@
   type="module"
   fetchpriority="low"
 ></script>
-
-<script
-  src="{{ 'lazy-video.js' | asset_url }}"
-  defer
-  fetchpriority="low"
-></script>
-
 <script
   src="{{ 'popover-polyfill.js' | asset_url }}"
-  type="module"
-  fetchpriority="low"
-></script>
-<script
-  src="{{ 'overflow-list.js' | asset_url }}"
   type="module"
   fetchpriority="low"
 ></script>
@@ -136,7 +134,6 @@
     fetchpriority="low"
   ></script>
 {% endif %}
-
 <script
   src="{{ 'dialog.js' | asset_url }}"
   type="module"
@@ -158,11 +155,6 @@
   fetchpriority="low"
 ></script>
 <script
-  src="{{ 'fly-to-cart.js' | asset_url }}"
-  type="module"
-  fetchpriority="low"
-></script>
-<script
   src="{{ 'accordion-custom.js' | asset_url }}"
   type="module"
   fetchpriority="low"
@@ -173,17 +165,17 @@
   fetchpriority="low"
 ></script>
 <script
+  src="{{ 'expanding_image.js' | asset_url }}"
+  type="module"
+  fetchpriority="low"
+></script>
+<script
   src="{{ 'media.js' | asset_url }}"
   type="module"
   fetchpriority="low"
 ></script>
 <script
   src="{{ 'product-price.js' | asset_url }}"
-  type="module"
-  fetchpriority="low"
-></script>
-<script
-  src="{{ 'product-sku.js' | asset_url }}"
   type="module"
   fetchpriority="low"
 ></script>
@@ -204,11 +196,6 @@
 ></script>
 <script
   src="{{ 'slideshow.js' | asset_url }}"
-  type="module"
-  fetchpriority="low"
-></script>
-<script
-  src="{{ 'layered-slideshow.js' | asset_url }}"
   type="module"
   fetchpriority="low"
 ></script>
@@ -243,20 +230,21 @@
   fetchpriority="low"
 ></script>
 <script
-  src="{{ 'volume-pricing.js' | asset_url }}"
+  src="{{ 'gift-card-recipient-form.js' | asset_url }}"
   type="module"
   fetchpriority="low"
 ></script>
 <script
-  src="{{ 'price-per-item.js' | asset_url }}"
-  type="module"
+  src="{{ 'lazy-video.js' | asset_url }}"
+  defer
   fetchpriority="low"
 ></script>
 <script
-  src="{{ 'volume-pricing-info.js' | asset_url }}"
-  type="module"
+  src="{{ 'embla-slider.js' | asset_url }}"
+  defer
   fetchpriority="low"
 ></script>
+
 
 {% if localization.available_countries.size > 1 or localization.available_languages.size > 1 %}
   <script
@@ -266,17 +254,7 @@
   ></script>
 {% endif %}
 
-{% if template == 'product' or template.name == 'product' or request.page_type == 'product' %}
-  <script
-    src="{{ 'fly-to-cart.js' | asset_url }}"
-    type="module"
-    fetchpriority="low"
-  ></script>
-  <script
-    src="{{ 'sticky-add-to-cart.js' | asset_url }}"
-    type="module"
-    fetchpriority="low"
-  ></script>
+{% if template == 'product' %}
   <script type="module">
     import { RecentlyViewed } from '@theme/recently-viewed-products';
     RecentlyViewed.addProduct('{{ product.id }}');
@@ -297,15 +275,26 @@
 ></script>
 
 <script>
+  const basePath = 'https://cdn.shopify.com/static/themes/horizon/placeholders';
   const Theme = {
+    placeholders: {
+      general: [
+        `${basePath}/general-1.png`,
+        `${basePath}/general-2.png`,
+        `${basePath}/general-3.png`,
+        `${basePath}/general-4.png`,
+        `${basePath}/general-5.png`,
+        `${basePath}/general-6.png`,
+        `${basePath}/general-7.png`,
+      ],
+      product: [`${basePath}/product-ball.png`, `${basePath}/product-cone.png`, `${basePath}/product-cube.png`],
+    },
     translations: {
       placeholder_image: `{{ 'content.placeholder_image' | t }}`,
       added: `{{ 'actions.added' | t }}`,
       recipient_form_fields_visible: `{{ 'content.recipient_form_fields_visible' | t }}`,
       recipient_form_fields_hidden: `{{ 'content.recipient_form_fields_hidden' | t }}`,
       recipient_form_error: `{{ 'content.recipient_form_error' | t }}`,
-      items_added_to_cart_one: `{{ 'content.items_added_to_cart.one' | t }}`,
-      items_added_to_cart_other: `{{ 'content.items_added_to_cart.other' | t }}`,
     },
     routes: {
       cart_add_url: '{{ routes.cart_add_url | append: '.js' }}',

@@ -1,4 +1,3 @@
-
 {% assign block_settings = block.settings %}
 <div
   class="
@@ -11,11 +10,11 @@
   {{ block.shopify_attributes }}
 >
   <span class="footer-utilities__text">
-    &copy; {{ 'now' | date: '%Y' }}
-    {{ shop.name | link_to: routes.root_url -}}
+    Copyright&nbsp;&copy; {{ 'now' | date: '%Y' }}&nbsp;LeLick
+    {% comment %} {{ shop.name | link_to: routes.root_url -}}
     {%- if block_settings.show_powered_by -%}
       , {{ powered_by_link }}
-    {%- endif -%}
+    {%- endif -%} {% endcomment %}
   </span>
 </div>
 

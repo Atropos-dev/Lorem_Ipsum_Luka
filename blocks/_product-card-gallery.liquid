@@ -1,128 +1,39 @@
+{% liquid
+  assign has_applied_colour_filter = false
+  assign filters_to_check = collection.filters | default: search.filters
 
-
-{% assign product = closest.product %}
+  for filter in filters_to_check
+    if filter.type == 'list' and filter.param_name contains 'color' and filter.active_values.size > 0
+      assign has_applied_colour_filter = true
+      break
+    endif
+  endfor
+%}
 
 {% capture children %}
-  {% unless product == blank %}
-    <div
-      class="product-badges product-badges--{{ settings.badge_position }}"
-      style="
-        --badge-padding-block: {{ settings.badge_padding_block }}px;
-        --badge-padding-inline: {{ settings.badge_padding_inline }}px;
-        --badge-padding-block-mobile: {{ settings.mobile_badge_padding_block }}px;
-        --badge-padding-inline-mobile: {{ settings.mobile_badge_padding_inline }}px;
-        --badge-border-radius: {{ settings.badge_corner_radius }}px;
-        --badge-font-family: var(--font-{{ settings.badge_font_family }}--family);
-        --badge-font-weight: {{ settings.badge_font_weight }};
-        --badge-text-transform: {{ settings.badge_text_transform }};
-        --badge-font-size: {{ settings.badge_font_size }}px;
-        --badge-font-size-mobile: {{ settings.mobile_badge_font_size }}px;
-        --badge-font-line-height: {{ settings.badge_font_line_height }}%;
-        --badge-font-letter-spacing: {{ settings.badge_font_letter_spacing | divided_by: 100.0 }}em;
-      "
-    >
-      {%- if product.available == false or product.compare_at_price > product.price -%}
-        <div
-          class="
-            product-badges__badge product-badges__badge--rectangle
-            {% if product.available == false %} color-{{ settings.badge_sold_out_color_scheme }}{% elsif product.compare_at_price > product.price %} color-{{ settings.badge_sale_color_scheme }}{% endif %}
-          "
-        >
-          {%- if product.available == false -%}
-            {{ 'content.product_badge_sold_out' | t }}
-          {%- elsif product.compare_at_price > product.price -%}
-            {{ 'content.product_badge_sale' | t }}
-          {%- endif -%}
-        </div>
-      {%- endif -%}
-      {% if product.metafields.custom.tags != blank %}
-        {% for tag in product.metafields.custom.tags.value %}
-          <div class="product-badges__badge product-badges__badge--rectangle" style="background-color: {{ tag.bg_color }};color: {{ tag.text_color }};">
-            {{ tag.label }}
-            {% if tag.icon != blank %}
-              <span class="product-badges__badge-icon">
-                {{ tag.icon | image_url: width: 50 | image_tag }}
-              </span>
-            {% endif %}
-          </div>
-        {% endfor %}
-      {% endif %}
-    </div>
+  {% unless closest.product == blank %}
+    {% render 'product-card-badges', product: closest.product %}
     {%  if settings.quick_add or settings.mobile_quick_add %}
-      {% render 'quick-add', product: product, section_id: section.id %}
+      {% render 'quick-add', product: closest.product, section_id: section.id %}
     {% endif %}
   {% endunless %}
 {% endcapture %}
 
-{% render 'card-gallery', children: children %}
+{% render 'card-gallery', children: children, has_applied_colour_filter: has_applied_colour_filter %}
 
 {% # Title and price for the zoomed out grid view %}
 <div class="product-grid-view-zoom-out--details">
-  {% if product == blank %}
+  {% if closest.product == blank %}
     <h3 class="h4">{{ 'content.product_card_placeholder' | t }}</h3>
   {% else %}
-    <h3 class="h4">{{ product.title }}</h3>
+    <h3 class="h4">{{ closest.product.title }}</h3>
+    <div class="h6">
+      <product-price data-product-id="{{ closest.product.id }}">
+        {% render 'price', product_resource: closest.product, show_unit_price: false %}
+      </product-price>
+    </div>
   {% endif %}
 </div>
-
-{% stylesheet %}
-  .product-badges {
-    --badge-inset: max(var(--padding-xs), calc((var(--border-radius) + var(--padding-xs)) * (1 - cos(45deg))));
-
-    position: absolute;
-    z-index: var(--layer-flat);
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--gap-3xs);
-  }
-
-  .product-badges--bottom-left {
-    bottom: calc(var(--badge-inset) + var(--padding-block-start));
-    left: calc(var(--badge-inset) + var(--padding-inline-start));
-  }
-
-  .product-badges--top-left {
-    top: calc(var(--badge-inset) + var(--padding-block-start));
-    left: calc(var(--badge-inset) + var(--padding-inline-start));
-  }
-
-  .product-badges--top-right {
-    top: calc(var(--badge-inset) + var(--padding-block-start));
-    right: calc(var(--badge-inset) + var(--padding-inline-start));
-  }
-
-  .product-badges__badge {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      color: var(--color-foreground);
-      background: var(--color-background);
-      font-size: var(--badge-font-size);
-      font-family: var(--badge-font-family);
-      font-weight: var(--badge-font-weight);
-      line-height: var(--badge-font-line-height);
-      letter-spacing: var(--badge-font-letter-spacing);
-      text-transform: var(--badge-text-transform);
-      border-radius: var(--badge-border-radius);
-      gap: var(--gap-3xs);
-      padding-block: var(--badge-padding-block);
-      padding-inline: var(--badge-padding-inline);
-  }
-
-  @media (max-width: 749px) {
-    .product-badges__badge {
-      font-size: var(--badge-font-size-mobile);
-      padding-block: var(--badge-padding-block-mobile);
-      padding-inline: var(--badge-padding-inline-mobile);
-    }
-  }
-
-  .product-badges__badge-icon {
-    display: flex;
-    width: 16px;
-  }
-{% endstylesheet %}
 
 {% schema %}
 {

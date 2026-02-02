@@ -9,9 +9,8 @@
 
 {%- assign tag = tag | default: 'button' -%}
 <{{ tag }}
-  class="account-button header-actions__action{% unless block_settings.account_icon_type == 'icon' and block_settings.account_icon_text == blank and customer.has_avatar? and customer.first_name and customer.email %} account-button__text{% endunless %}"
+class="account-button header-actions__action{% unless block_settings.account_icon_type == 'icon' and block_settings.account_icon_text == blank and customer.has_avatar? and customer.first_name and customer.email %} account-button__text{% endunless %}"
   aria-label="{{ 'accessibility.account' | t }}"
-  aria-haspopup="dialog"
   {%- if popover_id -%}
     popovertarget="{{ popover_id }}"
     popovertargetaction="{{ popover_action | default: 'toggle' }}"
@@ -66,12 +65,13 @@
     transition: color var(--animation-speed) var(--animation-easing);
     anchor-name: --account-button-trigger;
   }
+
   .account-button__text {
     width: auto;
   }
 
   .account-button__avatar {
-    --account-button-size: 1.3rem;
+    --account-button-size: 1.625rem;
 
     display: flex;
     align-items: center;
@@ -80,7 +80,7 @@
     height: var(--account-button-size);
     border-radius: var(--style-border-radius-50);
     background-color: var(--color-primary-button-background);
-    font-size: var(--font-size--xs);
+    font-size: var(--font-size--sm);
     font-weight: 500;
     color: var(--color-primary-button-text);
     text-transform: uppercase;

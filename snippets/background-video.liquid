@@ -12,7 +12,7 @@
 
 {%- if background_video != blank -%}
   <video-background-component
-    class="{{ video_classes }}"
+    class="{{ video_classes }} {{ classes }}"
   >
     {% liquid
       assign media_width_desktop = 100 | append: 'vw'

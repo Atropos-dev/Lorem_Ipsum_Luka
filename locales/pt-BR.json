@@ -25,8 +25,7 @@
       "comment": "Comentário",
       "post_success": "Agradecemos seu contato. Retornaremos o mais rápido possível.",
       "error_heading": "Ajuste o seguinte:"
-    },
-    "slider_label": "Controle deslizante"
+    }
   },
   "accessibility": {
     "play_model": "Reproduzir modelo 3D",
@@ -52,7 +51,7 @@
       "other": "{{ count }} filtros aplicados",
       "many": "{{ count }} filtros aplicados"
     },
-    "account": "Conta",
+    "account": "Abrir menu da conta",
     "cart": "Carrinho",
     "cart_count": "Total de itens no carrinho",
     "menu": "Menu",
@@ -63,19 +62,17 @@
     "discount": "Aplicar um código de desconto",
     "discount_menu": "Códigos de desconto",
     "discount_applied": "Código de desconto aplicado: {{ code }}",
+    "open_cart_drawer": "Abrir carrinho",
     "inventory_status": "Status do estoque",
     "pause_video": "Pausar o vídeo",
     "find_country": "Localizar o país",
-    "localization_region_and_language": "Seletor de região e idioma",
+    "localization_region_and_language": "Abrir seletor de região e idioma",
+    "open_search_modal": "Abrir pesquisa",
     "decrease_quantity": "Diminuir a quantidade",
     "increase_quantity": "Aumentar a quantidade",
     "rating": "A classificação deste produto é {{ rating }} de 5",
     "quantity": "Quantidade",
-    "nested_product": "{{ product_title }} para {{ parent_title }}",
-    "remove": "Remover",
-    "view_pricing_info": "Ver informações sobre preços",
-    "open_hotspot": "Abrir hotspot",
-    "slideshow": "Apresentação de slides"
+    "nested_product": "{{ product_title }} para {{ parent_title }}"
   },
   "actions": {
     "add_to_cart": "Adicionar ao carrinho",
@@ -246,37 +243,7 @@
     "recipient_form_fields_hidden": "Os campos do formulário do destinatário agora estão ocultos",
     "recipient_form_error": "Houve um erro com o envio do formulário",
     "product_custom_property_character_count": "{{ used_chars }}/{{ max_chars }} caracteres usados",
-    "terms_and_policies": "Termos e políticas",
-    "pagination": {
-      "nav_label": "Navegação por paginação",
-      "previous": "Anterior",
-      "next": "Próxima",
-      "page": "Página {{ page }}"
-    },
-    "volume_pricing_available": "Os preços por volume estão disponíveis",
-    "volume_pricing": "Preços por volume",
-    "at_price_each": "{{ price }}/cada",
-    "each": "{{ price }}/cada",
-    "each_abbreviation": "cada",
-    "price_at": "em",
-    "price_range": "Faixa de preço",
-    "item_count_cutoff": "Mais de {{ count }} itens",
-    "cancel": "Cancelar",
-    "product_subtotal": "Subtotal do produto",
-    "quantity_per_item": "/cada",
-    "remove_all": "Remover tudo",
-    "remove_all_items_confirmation": "Remover todos os {{ count }} itens do carrinho?",
-    "remove_one_item_confirmation": "Remover 1 item do carrinho?",
-    "total_items": "Total de itens",
-    "variant": "Variante",
-    "variant_total": "Total das variantes",
-    "view_cart": "Ver carrinho",
-    "your_cart": "Seu carrinho",
-    "items_added_to_cart": {
-      "one": "Foi adicionado 1 item ao carrinho",
-      "other": "{{ count }} itens adicionados ao carrinho",
-      "many": "{{ count }} itens adicionados ao carrinho"
-    }
+    "terms_and_policies": "Termos e políticas"
   },
   "gift_cards": {
     "issued": {
@@ -310,15 +277,7 @@
       "adding_to_cart": "Adicionando...",
       "add_to_cart_error": "Erro ao adicionar ao carrinho",
       "sold_out": "Esgotado",
-      "unavailable": "Indisponível",
-      "quantity_error_max": "Este item apresenta um máximo de {{ maximum }}",
-      "quantity": "Quantidade",
-      "quantity_increments": "Incrementos de {{ increment }}",
-      "quantity_minimum": "Mínimo de {{ minimum }}",
-      "quantity_maximum": "Máximo de {{ maximum }}",
-      "in_cart": "no carrinho",
-      "default_title": "Título padrão",
-      "sticky_add_to_cart": "Barra de adição rápida ao carrinho"
+      "unavailable": "Indisponível"
     }
   },
   "fields": {

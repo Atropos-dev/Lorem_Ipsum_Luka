@@ -25,7 +25,13 @@
   endif
 -%}
 
---flex-direction: {{ settings.content_direction | default: 'column' }}; --flex-wrap: nowrap; --flex-wrap-mobile: wrap;
+--flex-direction: {{ settings.content_direction | default: 'column' }}; 
+--flex-wrap: nowrap; 
+{% if settings.vertical_on_mobile == false %}
+--flex-wrap-mobile: nowrap;
+{% else %}
+--flex-wrap-mobile: wrap;
+{% endif %}
 
 {% render 'gap-style', value: settings.gap, mobile_value: settings.mobile_gap %}
 

@@ -1,13 +1,28 @@
-
-
 {% liquid
   assign block_settings = block.settings
   assign image = settings.logo
+  assign mobile_image = settings.mobile_logo
 
   if block_settings.inverse and settings.logo_inverse
     assign image = settings.logo_inverse
   endif
 %}
+
+{%- if mobile_image -%}
+  {% capture mobile_logo %}
+    {{-
+      mobile_image
+      | image_url: width: 3840
+      | image_tag:
+        width: mobile_image.width,
+        widths: '240, 352, 832, 1200, 1600, 1920, 2560, 3840',
+        height: mobile_image.height,
+        class: 'logo-block__image',
+        alt: shop.name,
+        sizes: '(min-width: 750px) calc(var(--logo-width)), 100vw'
+    -}}
+  {% endcapture %}
+{%- endif -%}
 
 {%- if image -%}
   {% capture logo_image %}
@@ -37,7 +52,7 @@
       {% if image %}
         --logo-width: {{ image.width | times: 1.00 | divided_by: image.height | times: block_settings.pixel_height }}px;
       {% else %}
-        --logo-width: {{ shop.name.size | times: 0.65 }}em;
+        --logo-width: {{ shop.name.size }}ch;
         --logo-height: {{ block_settings.pixel_height }}px;
       {% endif %}
     {% endif %}
@@ -50,7 +65,7 @@
         {% if image %}
           --logo-width-mobile: {{ image.width | times: 1.00 | divided_by: image.height | times: block_settings.pixel_height_mobile }}px;
           {% else %}
-            --logo-width-mobile: {{ shop.name.size | times: 0.65 }}em;
+            --logo-width-mobile: {{ shop.name.size }}ch;
             --logo-height-mobile: {{ block_settings.pixel_height_mobile }}px;
         {% endif %}
       {% endif %}
@@ -60,8 +75,11 @@
   {{ block.shopify_attributes }}
 >
   {% if logo_image %}
-    <div class="logo-block__image-wrapper">
+    <div class="logo-block__image-wrapper footer-logo_desktop">
       {{ logo_image }}
+    </div>
+    <div class="logo-block__image-wrapper footer-logo_mobile">
+      {{ mobile_logo }}
     </div>
   {% else %}
     {% render 'jumbo-text', text: shop.name %}
@@ -97,6 +115,18 @@
   .logo-block__image {
     object-fit: contain;
     width: 100%;
+  }
+
+  @media screen and (max-width: 767px) {
+    .footer-logo_desktop {
+      display: none;
+    }
+  }
+
+  @media screen and (min-width: 768px) {
+    .footer-logo_mobile {
+      display: none;
+    }
   }
 {% endstylesheet %}
 

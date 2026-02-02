@@ -1,5 +1,3 @@
-
-
 {% liquid
   assign block_settings = block.settings
   assign menu = block_settings.menu
@@ -34,11 +32,11 @@
       data-testid="menu-details"
       style="
         --spacing--size: {{ block_settings.menu_spacing }}px;
+        {% if block_settings.order_reverse %}
+         display: flex; flex-direction: column-reverse;
+        {% endif %}
         {% render 'spacing-style', settings: block_settings %}
       "
-      {% if show_as_accordion == false %}
-        open
-      {% endif %}
       {{ block.shopify_attributes }}
     >
       <summary class="menu__heading{% if heading == blank %} menu__heading--empty{% endif %} {{ block_settings.heading_preset }}">
@@ -56,10 +54,10 @@
 
       <div class="details-content">
         {% if menu %}
-          <ul class="list-unstyled">
+          <ul class="list-unstyled footer-menu_link">
             {% for link in menu.links %}
               <li class="menu__item {{ block_settings.link_preset }}">
-                <a href="{{ link.url }}">
+                <a href="{{ link.url }}" class="footer-menu__item">
                   {{ link.title }}
                 </a>
               </li>
@@ -72,6 +70,16 @@
 {% endif %}
 
 <style>
+  .list-unstyled.footer-menu_link {
+    list-style: disc;
+    padding-left: 16px;
+  }
+
+  .footer-menu__item,
+  .list-unstyled.footer-menu_link li::marker {
+    color: var(--color-primary);
+  }
+
   .menu {
     width: 100%;
   }
@@ -123,7 +131,6 @@
       margin-block-start: var(--spacing--size);
     }
 
-    
     {% if block.settings.content_direction == 'row' and block.settings.vertical_on_mobile == false %}
       .menu .details-content ul {
         display: flex;
@@ -212,6 +219,12 @@
       "step": 1,
       "unit": "px",
       "default": 12
+    },
+    {
+      "type": "checkbox",
+      "id": "order_reverse",
+      "label": "Order reverse",
+      "default": false
     },
     {
       "type": "checkbox",

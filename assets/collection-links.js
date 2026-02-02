@@ -153,40 +153,24 @@ class CollectionLinks extends Component {
 
     if (!selectedImage) return;
 
-    // Cache image dimensions to avoid repeated layout reads
-    let cachedImageHeight = selectedImage.offsetHeight;
-    let cachedImageWidth = selectedImage.offsetWidth;
-
-    /** @type {number | null} */
-    let rafId = null;
-
     /** @param {PointerEvent} event */
     const updateImagePosition = (event) => {
-      // Throttle with requestAnimationFrame to avoid layout thrashing
-      if (rafId !== null) return;
+      const imageHeight = selectedImage.offsetHeight;
+      const imageWidth = selectedImage.offsetWidth;
+      const viewportHeight = window.innerHeight;
+      const viewportWidth = window.innerWidth;
+      const offset = 15;
 
-      rafId = requestAnimationFrame(() => {
-        rafId = null;
+      const wouldBeCutOff = event.clientY + imageHeight + offset > viewportHeight;
+      const yPos = wouldBeCutOff ? event.clientY - imageHeight - offset : event.clientY + offset;
 
-        const viewportHeight = window.innerHeight;
-        const viewportWidth = window.innerWidth;
-        const offset = 15;
+      const xPos = Math.min(Math.max(offset, event.clientX + offset), viewportWidth - imageWidth - offset);
 
-        const wouldBeCutOff = event.clientY + cachedImageHeight + offset > viewportHeight;
-        const yPos = wouldBeCutOff ? event.clientY - cachedImageHeight - offset : event.clientY + offset;
-
-        const xPos = Math.min(Math.max(offset, event.clientX + offset), viewportWidth - cachedImageWidth - offset);
-
-        selectedImage.style.setProperty('--x', `${xPos}px`);
-        selectedImage.style.setProperty('--y', `${yPos}px`);
-      });
+      selectedImage.style.setProperty('--x', `${xPos}px`);
+      selectedImage.style.setProperty('--y', `${yPos}px`);
     };
 
     const reset = () => {
-      if (rafId !== null) {
-        cancelAnimationFrame(rafId);
-        rafId = null;
-      }
       selectedImage.removeAttribute('reveal');
       target.removeEventListener('mousemove', updateImagePosition);
     };

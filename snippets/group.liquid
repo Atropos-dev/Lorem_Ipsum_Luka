@@ -29,6 +29,9 @@
     {% render 'spacing-style', settings: settings %}
     {% render 'size-style', settings: settings %}
     {{ style }}
+    {% if settings.enable_aspect_ratio %}
+      aspect-ratio: {{ settings.aspect_ratio | divided_by: 100.0 }};
+    {% endif %}
   "
   {{ shopify_attributes }}
   data-testid="group-block"
@@ -72,7 +75,7 @@
       layout-panel-flex--{{ settings.content_direction | default: 'column' }}
       {% if settings.vertical_on_mobile %} mobile-column{% endif %}
       {% if settings.mobile_reverse %} mobile-reverse--{{ settings.content_direction }}{% endif %}
-
+      {% if settings.width_mobile == 'custom' %} align-mobile--{{ settings.align_mobile }} {% endif %}
     "
     style="{% render 'layout-panel-style', settings: settings %}"
   >
@@ -116,3 +119,66 @@
     background: linear-gradient(var(--overlay-direction), var(--overlay-hover-color), var(--overlay-hover-color--end));
   }
 {% endstylesheet %}
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const footerLogo = document.querySelector('.custom-logo__container');
+    const svgLogo = footerLogo.querySelector('svg path');
+
+    const footer = footerLogo.closest('.footer-content');
+
+    // Initialize Embla (or get your existing instance)
+    const emblaNode = footer.querySelector('.embla__viewport');
+    const embla = EmblaCarousel(emblaNode, {
+      loop: false, // adjust options as needed
+    });
+
+    
+    // Function to update footer logo color
+    const updateFooterLogoColor = () => {
+      const selectedIndex = embla.selectedScrollSnap();
+      const allSlides = emblaNode.querySelectorAll('.embla__slide'); // query DOM directly
+      const selectedSlide = allSlides[selectedIndex];
+      const selectedProduct = selectedSlide.querySelector('.slide-product__card');
+      const productColor = selectedProduct.dataset.productColor;
+
+      const fixedColor = "rgb(255, 222, 205)";
+      
+      if (productColor) {
+        svgLogo.style.fill = fixedColor;
+      }
+      
+      const fixedBlocks = document.querySelectorAll('.custom-block__container:not([change-color])');
+      const customBlocks = document.querySelectorAll('.custom-block__container[change-color]');
+
+      fixedBlocks.forEach((fixedBlock) => {
+        const bgColor = getComputedStyle(fixedBlock).backgroundColor;
+        if(bgColor != 'rgba(0, 0, 0, 0)') {
+          fixedBlock.style.backgroundColor = fixedColor;
+        } else {
+          fixedBlock.style.color = fixedColor;
+        }
+      });
+
+      customBlocks.forEach((customBlock) => {
+        const bgColor = getComputedStyle(customBlock).backgroundColor;
+        if(bgColor != 'rgba(0, 0, 0, 0)') {
+          customBlock.style.backgroundColor = productColor;
+        } else {
+          customBlock.style.color = productColor;
+        }
+      });
+
+      const socialIcons = document.querySelectorAll('.social-icons__icon-wrapper');
+      socialIcons.forEach((socialIcon) => {
+        socialIcon.style.backgroundColor = fixedColor;
+      });
+    };
+
+    // Initial update
+    updateFooterLogoColor();
+
+    // Update whenever slide changes
+    embla.on('select', updateFooterLogoColor);
+  });
+</script>

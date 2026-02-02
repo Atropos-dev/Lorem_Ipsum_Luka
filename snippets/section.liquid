@@ -9,14 +9,19 @@
 <div
   class="section section-mobile--{{ section.settings.section_width_mobile }} section--{{ section.settings.section_width }} color-{{ section.settings.color_scheme }} {{ section.settings.visibility }} {% render 'animate', animation: section.settings.animation %}"
   data-testid="ui-test-section"
-
   {% if request.visual_preview_mode %}
     data-shopify-visual-preview
   {% endif %}
 
   style="
     {% if section.settings.section_height == 'custom' %}
-      --section-min-height: {{ section.settings.section_height_custom }}svh;
+      {% if section.settings.enable_pixel == false %}
+        --section-min-height: {{ section.settings.section_height_custom }}svh;
+        --section-min-height-mobile: {{ section.settings.section_height_custom_mobile }}svh;
+        {% else %}
+        --section-min-height: {{ section.settings.section_height_pixel }}px;
+        --section-min-height-mobile: {{ section.settings.section_height_pixel_mobile }}px;
+      {% endif %}
     {% elsif section.settings.section_height == 'full-screen' %}
       --section-min-height: 100svh;
     {% elsif section.settings.section_height == 'small' %}
@@ -27,7 +32,7 @@
 
     {% if section.settings.section_height != '' %}
      --section-preview-height: 600px;
-     {% endif %}
+    {% endif %}
   "
 >
   <div class="custom-section-background">
@@ -36,6 +41,7 @@
       background_video: section.settings.video,
       background_video_position: section.settings.video_position,
       background_image: section.settings.background_image,
+      background_image_mobile: section.settings.background_image_mobile,
       background_image_position: section.settings.background_image_position
     %}
   </div>
@@ -97,10 +103,38 @@
     z-index: var(--layer-flat);
   }
 
-  @media (max-width: 749px) {
-    .custom-section-content .section-content-wrapper {
-      display: grid;
-      grid-template-columns: repeat({{ section.settings.mobile_columns }}, 1fr);
-    }
+  .shopify-section:has([change-bg-color]) .section-background::before {
+    content: '';
+    background: var(--section-bg-color);
+    position: absolute;
+    inset: 0;
+    display: block;
   }
 </style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const section = document.querySelector('.shopify-section:has([change-bg-color])');
+    const emblaNode = section.querySelector('.embla__viewport');
+    const embla = EmblaCarousel(emblaNode, {
+      loop: false, // adjust options as needed
+    });
+    
+    const updateSectionBgColor = () => {
+      const selectedIndex = embla.selectedScrollSnap();
+      const allSlides = emblaNode.querySelectorAll('.embla__slide');
+      const selectedSlide = allSlides[selectedIndex];
+      const selectedProduct = selectedSlide.querySelector('.slide-product__card');
+      const productColor = selectedProduct.dataset.productColor;
+
+      const bg =  section.querySelector('.section-background');
+      if (!bg) return;
+
+      bg.style.setProperty('--section-bg-color', productColor);
+    };
+
+    updateSectionBgColor();
+
+    embla.on('select', updateSectionBgColor);
+  });
+</script>

@@ -17,7 +17,7 @@
     data-testid="{{ products_test_id }}"
   {% endif %}
 >
-{% if settings.enable_search_suggestion and settings.search_suggested_links != blank %}
+  {% if settings.enable_search_suggestion and settings.search_suggested_links != blank %}
     <div class="suggested-searches">
       <h4 class="predictive-search-results__title">
         Suggested searches
@@ -153,7 +153,7 @@
 
   .predictive-search-results__clear.button-unstyled {
     color: var(--color-foreground);
-    opacity: 0.68;
+    opacity: 0.5;
     transition: opacity var(--animation-speed-medium) var(--animation-easing);
     padding: 0;
     margin-left: var(--margin-sm);

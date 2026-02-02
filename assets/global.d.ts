@@ -17,6 +17,10 @@ declare global {
 
   interface Theme {
     translations: Record<string, string>;
+    placeholders: {
+      general: string[];
+      product: string[];
+    };
     routes: {
       cart_add_url: string;
       cart_change_url: string;

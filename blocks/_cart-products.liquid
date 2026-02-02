@@ -1,5 +1,3 @@
-
-
 {% render 'cart-products' %}
 
 {% stylesheet %}
@@ -34,7 +32,6 @@
     {
       "type": "select",
       "id": "image_ratio",
-      "label": "t:settings.aspect_ratio",
       "options": [
         {
           "value": "adapt",
@@ -49,7 +46,8 @@
           "label": "t:options.square"
         }
       ],
-      "default": "adapt"
+      "default": "adapt",
+      "label": "t:settings.aspect_ratio"
     },
     {
       "type": "checkbox",

@@ -1,5 +1,3 @@
-
-
 {% liquid
   assign order = 'logo,menu,localization,search,mobile_search,actions'
 
@@ -124,6 +122,12 @@
     assign show_country = false
   endif
 
+  if show_country or show_language
+    capture localization_markup
+      render 'dropdown-localization', show_country: show_country, show_language: show_language, country_style: section.settings.country_selector_style, localization_position: section.settings.localization_position
+    endcapture
+  endif
+
   assign bottom_row_blocks = ''
 
   if section.settings.menu_row == 'bottom'
@@ -171,100 +175,6 @@
   endif
 %}
 
-{% capture localization_markup %}
-  {% liquid
-    assign localization_font = '--menu-localization-font: var(--font-[localization_font]--family); ' | replace: '[localization_font]', section.settings.localization_font
-    assign localization_font_size = '--menu-localization-font-size: [localization_font_size]; ' | replace: '[localization_font_size]', section.settings.localization_font_size
-    assign color_shadow = '--color-shadow: rgb(var(--color-foreground-rgb) / var(--opacity-10-25));'
-    assign form_style = localization_font | append: localization_font_size | append: color_shadow
-  %}
-  {% if show_language and show_country == false %}
-    <div class="dropdown-localization mobile:hidden">
-      {% render 'localization-form',
-        show_country: show_country,
-        show_language: show_language,
-        localization_style: 'dropdown',
-        form_style: form_style,
-        block_id: block.id
-      %}
-    </div>
-  {% elsif show_country %}
-    <dropdown-localization-component
-      class="dropdown-localization mobile:hidden"
-    >
-      <button
-        type="button"
-        class="button dropdown-localization__button localization-selector link link--text"
-        aria-expanded="false"
-        aria-controls="dropdown-localization-results"
-        ref="button"
-        on:click="/toggleSelector"
-        style="{{ localization_font }} {{ localization_font_size }}"
-      >
-        {% if show_country %}
-          {% if section.settings.country_selector_style == true %}
-            {% liquid
-              assign background_brightness = section.settings.color_scheme.settings.background | color_brightness
-              if background_brightness < 64
-                assign shadow_size = 4
-              else
-                assign shadow_size = 2
-              endif
-            %}
-            <span
-              class="icon-flag"
-              style="
-                background-image: url({{- localization.country | image_url: width: 32 }});
-                --size-shadow: {{ shadow_size }}px;
-                --color-shadow: rgb(var(--color-foreground-rgb) / var(--opacity-30-60));
-              "
-            ></span>
-          {% endif %}
-          <span
-            class="currency-code"
-            data-testid="localization-currency-code"
-          >
-            {{- localization.country.currency.iso_code -}}
-          </span>
-        {% endif %}
-        <span
-          class="visually-hidden"
-          data-testid="localization-visually-hidden"
-        >
-          {{- 'accessibility.localization_region_and_language' | t -}}
-        </span>
-
-        {%- if show_country and show_language -%}
-          <span>/</span>
-        {%- endif -%}
-
-        {%- if show_language -%}
-          <span>
-            {{ localization.language.iso_code | upcase }}
-          </span>
-        {%- endif -%}
-        <span class="svg-wrapper icon-caret">
-          {{- 'icon-caret.svg' | inline_asset_content -}}
-        </span>
-      </button>
-
-      <div
-        class="localization-wrapper {{ section.settings.localization_position }}-bound color-{{ settings.popover_color_scheme }}"
-        hidden
-        ref="panel"
-      >
-        {% render 'localization-form',
-          show_country: show_country,
-          show_language: show_language,
-          localization_style: 'dropdown',
-          form_style: form_style,
-          block_id: block.id
-        %}
-      </div>
-    </dropdown-localization-component>
-  {% endif %}
-{% endcapture %}
-
 <script type="application/ld+json">
   {
     "@context": "http://schema.org",
@@ -280,7 +190,6 @@
 <header-component
   id="header-component"
   class="{{ class }} {% render 'animate', animation: section.settings.animation %}"
-  data-theme-color="rgb({{ section.settings.color_scheme_top.settings.background.rgb }})"
   {% if transparent %}
     transparent="{{ transparent }}"
   {% endif %}
@@ -290,9 +199,6 @@
   data-skip-node-update
   data-scroll-direction="none"
 >
-  {%- if request.page_type == 'index' -%}
-    <h1 class="visually-hidden">{{ shop.name }}</h1>
-  {%- endif -%}
   {% for row in rows %}
     {% liquid
       assign scheme = 'color_scheme_' | append: row
@@ -370,13 +276,17 @@
 
 <style>
   body {
-    --header-height: 60px;
+    --header-height: 0px;
     --header-group-height: var(--header-height);
     --transparent-header-offset-boolean: 0; /* stylelint-disable-line declaration-property-value-disallowed-list */
   }
 
-  .header {
-    display: block;
+  body:has(> #header-group > header) {
+    --header-height: 60px;
+  }
+
+  body:has(> #header-group:empty) {
+    --header-group-height: 0px;
   }
 
   .header[transparent] {
@@ -391,7 +301,7 @@
     --header-logo-inverse-display: block;
 
     position: absolute;
-    top: 0;
+    top: 40px;
     left: 0;
     right: 0;
 
@@ -465,7 +375,6 @@
 
   .header-section {
     position: relative;
-    z-index: var(--layer-heightened);
   }
 
   #header-group:has(#header-component[sticky]) {
@@ -526,7 +435,7 @@
 
   .header__column {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
 
     /* on mobile, header__column nodes are ignored to create a new grid-template-area based on all visible content */
     @media screen and (max-width: 749px) {
@@ -679,18 +588,13 @@
   .header {
     --header-padding: var(--padding-sm);
     --font-paragraph--line-height: 1;
-    contain: layout style;
-  }
-
-  .header:has(#Details-menu-drawer-container[open]) {
-    contain: style;
   }
 
   .header.header--compact {
     --header-padding: var(--padding-2xs);
   }
 
-    .header__columns {
+  .header__columns {
     --padding-block-start: {{ section.settings.padding-block }}px;
     --padding-block-end: {{ section.settings.padding-block }}px;
   }  
@@ -715,6 +619,10 @@
         padding-left: {{ section.settings.padding-inline-mobile }}px;
         padding-right: {{ section.settings.padding-inline-mobile }}px;
       {% endif %}
+
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
     }
   }
 
@@ -757,18 +665,6 @@
       margin-top: calc(var(--header-height) * var(--transparent-header-offset-boolean) * -1);
     }
   }
-
-  /* Optimize layout performance for hidden menus */
-  .header-menu .menu-list__submenu {
-    content-visibility: auto;
-    contain-intrinsic-size: 0px 500px;
-  }
-
-  /* Force visibility when open/animating to prevent layout issues */
-  .header-menu details[open] .menu-list__submenu,
-  .header-menu .menu-list__submenu[data-active] {
-    content-visibility: visible;
-  }
 </style>
 
 {% unless request.design_mode %}
@@ -794,6 +690,9 @@
     },
     {
       "type": "_header-cart"
+    },
+    {
+      "type": "button"
     }
   ],
   "settings": [
@@ -880,10 +779,6 @@
         }
       ],
       "default": "top"
-    },
-    {
-      "type": "paragraph",
-      "content": "t:content.manage_customer_accounts"
     },
     {
       "type": "header",
@@ -1287,6 +1182,10 @@
       "visible_if": "{{ section.settings.enable_transparent_header_collection }}"
     }
   ],
-  "presets": []
+  "presets": [
+    {
+      "name": "t:names.header",
+    }
+  ]
 }
 {% endschema %}

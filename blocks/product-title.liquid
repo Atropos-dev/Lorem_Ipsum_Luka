@@ -1,15 +1,13 @@
-
-
 {% if closest.product == blank %}
   {% assign text = 'placeholders.product_title' | t %}
   {% assign product_title = '<p>' | append: text | append: '</p>' %}
   {% render 'text', fallback_text: product_title, block: block %}
-{% else %}
+{% elsif closest.product != blank %}
   {% assign product_title = '<p>' | append: closest.product.title | append: '</p>' %}
   <a
     class="contents user-select-text"
     ref="productTitleLink"
-    href="{{ closest.product.selected_or_first_available_variant.url }}"
+    href="{% render 'product-card-variant-url', product: closest.product %}"
   >
     {% render 'text', fallback_text: product_title, block: block %}
   </a>
@@ -87,6 +85,14 @@
         {
           "value": "paragraph",
           "label": "t:options.paragraph"
+        },
+        {
+          "value": "body1",
+          "label": "t:options.body1"
+        },
+        {
+          "value": "body2",
+          "label": "t:options.body2"
         },
         {
           "value": "h1",
@@ -173,7 +179,7 @@
     },
     {
       "type": "select",
-      "id": "font_weight",
+      "id": "weight",
       "label": "t:settings.weight",
       "default": "400",
       "options": [

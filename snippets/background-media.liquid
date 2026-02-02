@@ -24,7 +24,7 @@
   if background_media == 'video'
     render 'background-video', background_video: background_video, background_video_position: background_video_position, placeholder: placeholder, classes: desktop_class
   elsif background_media == 'image'
-    render 'background-image', background_image: background_image, background_image_position: background_image_position, placeholder: placeholder, classes: desktop_class
+    render 'background-image', background_image: background_image, background_image_mobile:background_image_mobile, background_image_position: background_image_position, placeholder: placeholder, classes: desktop_class
   endif
   if background_media != 'none' and hover_background_image != blank
     render 'background-image', background_image: hover_background_image, background_image_position: hover_background_image_position, placeholder: placeholder, classes: 'hidden--mobile hover-background-image'

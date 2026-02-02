@@ -3,6 +3,7 @@ import {
   center,
   closest,
   clamp,
+  getVisibleElements,
   mediaQueryLarge,
   prefersReducedMotion,
   preventDefault,
@@ -94,11 +95,6 @@ export class Slideshow extends Component {
     if (this.#resizeObserver) {
       this.#resizeObserver.disconnect();
     }
-
-    if (this.#intersectionObserver) {
-      this.#intersectionObserver.disconnect();
-      this.#intersectionObserver = null;
-    }
   }
 
   /** Indicates whether the slideshow is nested inside another slideshow. */
@@ -120,9 +116,6 @@ export class Slideshow extends Component {
   async select(input, event, options = {}) {
     if (this.#disabled || !this.refs.slides?.length) return;
     if (!this.#scroll) return;
-
-    // Store the actual current slide before any mutations
-    const currentSlide = this.slides?.[this.current];
 
     for (const slide of this.refs.slides) {
       if (slide.hasAttribute('reveal')) {
@@ -151,14 +144,13 @@ export class Slideshow extends Component {
     })();
 
     const { current } = this;
+
+    // Guard if invalid
+    if (requestedIndex === undefined || isNaN(requestedIndex) || requestedIndex === current) return;
+
     const { slides } = this;
 
-    // Guard checks: no slides, invalid index, or selecting the same slide
-    if (!slides?.length || requestedIndex === undefined || isNaN(requestedIndex)) return;
-
-    const requestedSlideElement = slides?.[requestedIndex];
-    if (currentSlide === requestedSlideElement) return;
-
+    if (!slides?.length) return;
     if (!this.infinite) requestedIndex = clamp(requestedIndex, 0, slides.length - 1);
 
     event?.preventDefault();
@@ -181,6 +173,7 @@ export class Slideshow extends Component {
       await this.#scroll.finished; // ensure we're not mid-scroll
 
       const targetSlide = slides[index];
+      const currentSlide = slides[current];
       if (!targetSlide || !currentSlide) return;
 
       // Create a placeholder in the original DOM position of targetSlide
@@ -219,6 +212,7 @@ export class Slideshow extends Component {
 
     if (this.#scroll) {
       this.#scroll.to(slide, { instant });
+      
     }
 
     this.current = this.slides?.indexOf(slide) || 0;
@@ -347,9 +341,17 @@ export class Slideshow extends Component {
 
     if (current) current.textContent = `${value + 1}`;
 
+    // PATCH: update dots even inside duplicated slides
+    const realCount = this.refs.dots?.length || 1;
+    const domIndex = this.#current; // includes duplicates
+    const mappedIndex = ((domIndex % realCount) + realCount) % realCount;
+
     for (const controls of [thumbnails, dots]) {
-      controls?.forEach((el, i) => el.setAttribute('aria-selected', `${i === value}`));
+      controls?.forEach((el, i) => {
+        el.setAttribute('aria-selected', `${i === mappedIndex}`);
+      });
     }
+
 
     if (previous) previous.disabled = Boolean(!this.infinite && value === 0);
     if (next) next.disabled = Boolean(!this.infinite && slides && this.nextIndex >= slides.length);
@@ -360,19 +362,23 @@ export class Slideshow extends Component {
   }
 
   get visibleSlides() {
-    return this.#visibleSlides;
+    return getVisibleElements(this.refs.scroller, this.slides, SLIDE_VISIBLITY_THRESHOLD, 'x');
   }
 
   get previousIndex() {
-    const { current, visibleSlides } = this;
-    const modifier = visibleSlides.length > 1 ? visibleSlides.length : 1;
+    // const { current, visibleSlides } = this;
+    // const modifier = visibleSlides.length > 1 ? visibleSlides.length : 1;
+    const { current } = this;
+    const modifier = 1;
 
     return current - modifier;
   }
 
   get nextIndex() {
-    const { current, visibleSlides } = this;
-    const modifier = visibleSlides.length > 1 ? visibleSlides.length : 1;
+    // const { current, visibleSlides } = this;
+    // const modifier = visibleSlides.length > 1 ? visibleSlides.length : 1;
+    const { current } = this;
+    const modifier = 1;
 
     return current + modifier;
   }
@@ -431,18 +437,6 @@ export class Slideshow extends Component {
   #resizeObserver;
 
   /**
-   * IntersectionObserver for efficient visibility tracking of slides
-   * @type {IntersectionObserver | null}
-   */
-  #intersectionObserver = null;
-
-  /**
-   * Cached visible slides result from IntersectionObserver
-   * @type {HTMLElement[]}
-   */
-  #visibleSlides = [];
-
-  /**
    * Setup the slideshow without controls for zero or one slides
    */
   #setupSlideshowWithoutControls() {
@@ -476,10 +470,6 @@ export class Slideshow extends Component {
     }
 
     // Original sliding setup
-    // Setup IntersectionObserver first for efficient visibility tracking
-    this.#setupIntersectionObserver();
-
-    // Setup the scroll instance
     const { scroller } = this.refs;
     this.#scroll = new Scroller(scroller, {
       onScroll: this.#handleScroll,
@@ -495,32 +485,24 @@ export class Slideshow extends Component {
     document.addEventListener('visibilitychange', this.#handleVisibilityChange);
 
     this.#updateControlsVisibility();
-
     this.disabled = this.isNested || this.disabled;
-
     this.resume();
-
     this.current = this.initialSlideIndex;
 
     // Batch reads and writes to the DOM
     scheduler.schedule(() => {
       let visibleSlidesAmount = 0;
       const initialSlideId = this.initialSlide?.getAttribute('slide-id');
-
-      // Wait for next frame to ensure layout is fully calculated before setting initial scroll position
-      // This prevents race conditions on Safari mobile when section_width is 'full-width'
-      requestAnimationFrame(() => {
-        if (this.initialSlideIndex !== 0 && initialSlideId) {
-          this.select({ id: initialSlideId }, undefined, { animate: false });
+      if (this.initialSlideIndex !== 0 && initialSlideId) {
+        this.select({ id: initialSlideId }, undefined, { animate: false });
+        visibleSlidesAmount = 1;
+      } else {
+        visibleSlidesAmount = this.#updateVisibleSlides();
+        if (visibleSlidesAmount === 0) {
+          this.select(0, undefined, { animate: false });
           visibleSlidesAmount = 1;
-        } else {
-          visibleSlidesAmount = this.#updateVisibleSlides();
-          if (visibleSlidesAmount === 0) {
-            this.select(0, undefined, { animate: false });
-            visibleSlidesAmount = 1;
-          }
         }
-      });
+      }
 
       this.#resizeObserver = new ResizeObserver(async () => {
         if (viewTransition.current) await viewTransition.current;
@@ -538,7 +520,6 @@ export class Slideshow extends Component {
     });
   }
 
-  
   #setupFadeMode() {
     const { slides } = this.refs;
     if (!slides || slides.length <= 1) {
@@ -630,6 +611,7 @@ export class Slideshow extends Component {
 
     // Override next/previous for fade
     const slideCount = slides.length;
+
     const fadeTo = (index) => {
       if (!slides || index === this.current) return;
 
@@ -670,6 +652,7 @@ export class Slideshow extends Component {
       fadeTo(prevIndex);
     };
   }
+
 
   /**
    * Callback invoked on user initiated scroll to sync the current slide index
@@ -723,6 +706,7 @@ export class Slideshow extends Component {
     const { scroller } = this.refs;
     const centers = visibleSlides.map((slide) => center(slide, axis));
     const referencePoint = visibleSlides.length > 1 ? scroller.getBoundingClientRect()[axis] : center(scroller, axis);
+  
     const closestCenter = closest(centers, referencePoint);
     const closestVisibleSlide = visibleSlides[centers.indexOf(closestCenter)];
 
@@ -846,27 +830,44 @@ export class Slideshow extends Component {
       this.#centerSelectedThumbnail(newIndex);
 
       if (this.infinite) {
-        if (newIndex > currentIndex) {
-          this.next();
-        } else if (newIndex < currentIndex) {
-          this.previous();
+        this.dispatchEvent(
+          new SlideshowSelectEvent({
+            index: newIndex,
+            previousIndex: currentIndex,
+            userInitiated: true,
+            trigger: 'drag',
+            slide: newSlide,
+            id: newSlide.getAttribute('slide-id'),
+          })
+        );
+        const slidesLength = slides?.length / 2;
+        if(newIndex >= slidesLength - 1) {
+          this.select(0, undefined, { animate: false });
         } else if (newIndex == 0 && currentIndex == 0) {
-          this.previous();
-        } else {
-          this.next();
+          this.select(slidesLength, undefined, { animate: false });
         }
+        // if (newIndex > currentIndex) {
+        //   this.next();
+        // } else if (newIndex < currentIndex) {
+        //   this.previous();
+        // } else if (newIndex == 0 && currentIndex == 0) {
+        //   this.previous();
+        // } else {
+        //   this.next();
+        // }
       } else {
-      this.dispatchEvent(
-        new SlideshowSelectEvent({
-          index: newIndex,
-          previousIndex: currentIndex,
-          userInitiated: true,
-          trigger: 'drag',
-          slide: newSlide,
-          id: newSlide.getAttribute('slide-id'),
-        })
-      );
-    }
+        this.dispatchEvent(
+          new SlideshowSelectEvent({
+            index: newIndex,
+            previousIndex: currentIndex,
+            userInitiated: true,
+            trigger: 'drag',
+            slide: newSlide,
+            id: newSlide.getAttribute('slide-id'),
+          })
+        );
+      }
+
       this.current = newIndex;
 
       await this.#scroll.finished;
@@ -927,56 +928,6 @@ export class Slideshow extends Component {
   }
 
   /**
-   * Setup IntersectionObserver for efficient visibility tracking of slides
-   */
-  #setupIntersectionObserver() {
-    const { slides, scroller } = this.refs;
-    if (!slides?.length) return;
-
-    if (this.#intersectionObserver) {
-      this.#intersectionObserver.disconnect();
-    }
-
-    this.#intersectionObserver = new IntersectionObserver(
-      (entries) => {
-        const allEntries = [
-          ...entries,
-          ...(this.#intersectionObserver ? this.#intersectionObserver.takeRecords() : []),
-        ];
-
-        for (const entry of allEntries) {
-          const slide = /** @type {HTMLElement} */ (entry.target);
-          const isCurrentlyVisible = this.#visibleSlides.includes(slide);
-          const shouldBeVisible = entry.intersectionRatio >= SLIDE_VISIBLITY_THRESHOLD;
-
-          if (shouldBeVisible && !isCurrentlyVisible) {
-            this.#visibleSlides.push(slide);
-          } else if (!shouldBeVisible && isCurrentlyVisible) {
-            const index = this.#visibleSlides.indexOf(slide);
-            if (index > -1) {
-              this.#visibleSlides.splice(index, 1);
-            }
-          }
-        }
-
-        this.#visibleSlides.sort((a, b) => slides.indexOf(a) - slides.indexOf(b));
-        this.#updateVisibleSlides();
-      },
-      {
-        root: scroller,
-        threshold: SLIDE_VISIBLITY_THRESHOLD,
-        // Add small margin to account for sub-pixel rendering
-        rootMargin: '1px',
-      }
-    );
-
-    // Observe all slides - observer will fire initial callback asynchronously
-    slides.forEach((slide) => {
-      this.#intersectionObserver?.observe(slide);
-    });
-  }
-
-  /**
    * Centers the selected thumbnail in the thumbnails container
    * @param {number} index - The index of the selected thumbnail
    * @param {ScrollBehavior} [behavior] - The scroll behavior.
@@ -1004,13 +955,26 @@ export class Slideshow extends Component {
     if (!slides || !slides.length) return 0;
 
     const visibleSlides = this.visibleSlides;
+    if (!visibleSlides.length) return 0;
+
+    // --- NEW: pick the CENTER visible slide ---
+    const middleIndex = Math.floor(visibleSlides.length / 2);
+    const centerSlide = visibleSlides[middleIndex];
+
+    // Force current to be the center slide
+    const centerIndex = slides.indexOf(centerSlide);
+
+
+    // const currentIndex = this.current;
 
     // Batch writes to the DOM
     scheduler.schedule(() => {
       // Update aria-hidden based on visibility
-      slides.forEach((slide) => {
-        const isVisible = visibleSlides.includes(slide);
-        slide.setAttribute('aria-hidden', `${!isVisible}`);
+      slides.forEach((slide, index) => {
+        // const isVisible = index === currentIndex;
+        // slide.setAttribute('aria-hidden', `${isVisible}`);
+
+        slide.setAttribute("aria-hidden", index === centerIndex ? "true" : "false");
       });
     });
 

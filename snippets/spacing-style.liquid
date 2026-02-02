@@ -10,7 +10,8 @@
 {%- liquid
   assign scale_min = 20
   assign keys = 'padding-block-start,padding-block-end,padding-inline-start,padding-inline-end' | split: ','
- assign padding_block_start_mobile = settings['padding-block-start-mobile'] | default: -1
+
+  assign padding_block_start_mobile = settings['padding-block-start-mobile'] | default: -1
   assign padding_block_end_mobile = settings['padding-block-end-mobile'] | default: -1
   assign padding_inline_start_mobile = settings['padding-inline-start-mobile'] | default: -1
   assign padding_inline_end_mobile = settings['padding-inline-end-mobile'] | default: -1
@@ -38,7 +39,7 @@
   if padding_inline_end_mobile > -1
     echo '--padding-inline-end-mobile: ' | append: padding_inline_end_mobile | append: 'px;'
   endif
-  
+
   for key in keys
     assign value = settings[key]
 

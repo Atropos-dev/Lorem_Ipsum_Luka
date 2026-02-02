@@ -1,5 +1,3 @@
-
-
 {% liquid
   assign block_settings = block.settings
   assign ratio = 1
@@ -42,6 +40,10 @@
 
 {% capture image %}
   {%- if block_settings.image -%}
+    {% assign classes = 'image-block__image border-style' %}
+    {% if block_settings.mobile_image != blank %}
+        {% assign classes = 'image-block__image border-style hidden--mobile' %}
+    {% endif %}
     {{
       block_settings.image
       | image_url: width: 3840
@@ -49,10 +51,36 @@
         width: block_settings.image.width,
         widths: widths,
         height: block_settings.image.height,
-        class: 'image-block__image border-style',
+        class: classes,
         style: image_border_style,
         sizes: sizes
     }}
+    {% if block_settings.hover_image != blank %}
+      {{
+        block_settings.hover_image
+        | image_url: width: 3840
+        | image_tag:
+          width: block_settings.hover_image.width,
+          widths: widths,
+          height: block_settings.hover_image.height,
+          class: 'image-block__image border-style image-block__image-hover hidden--mobile',
+          style: image_border_style,
+          sizes: sizes
+      }}
+    {% endif %}
+    {% if block_settings.mobile_image != blank %}
+      {{
+        block_settings.mobile_image
+        | image_url: width: 3840
+        | image_tag:
+          width: block_settings.mobile_image.width,
+          widths: widths,
+          height: block_settings.mobile_image.height,
+          class: 'image-block__image border-style hidden--desktop',
+          style: image_border_style,
+          sizes: sizes
+      }}
+    {% endif %}
   {%- else -%}
     <div class="placeholder-image border-style size-style" style="{{ image_border_style }}">
       {{ 'detailed-apparel-1' | placeholder_svg_tag: 'hero__image' }}
@@ -97,6 +125,8 @@
 
     /* When the image is nested in a group, section, etc, respect the parent's horizontal alignment */
     justify-content: var(--horizontal-alignment, 'inline-start');
+    position: relative;
+    overflow: hidden;
   }
 
   .image-block--height-fill .image-block__image {
@@ -106,6 +136,27 @@
   .image-block__image {
     object-fit: cover;
     aspect-ratio: var(--ratio);
+  }
+  
+  .image-block .hidden--desktop {
+    aspect-ratio: unset !important;
+    height: revert-layer;
+  }
+
+  .image-block__image-hover {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    transition: opacity var(--transition-duration) var(--transition-ease-type) var(--transition-delay);
+  }
+
+  .image-block:hover .image-block__image-hover {
+    opacity: 1;
   }
 {% endstylesheet %}
 
@@ -120,6 +171,21 @@
       "label": "t:settings.image"
     },
     {
+      "type": "image_picker",
+      "id": "mobile_image",
+      "label": "Mobile image"
+    },
+    {
+      "type": "image_picker",
+      "id": "hover_image",
+      "label": "Hover image"
+    },
+    {
+      "type": "image_picker",
+      "id": "rotate_image",
+      "label": "ROtate image"
+    },
+    {
       "type": "url",
       "id": "link",
       "label": "t:settings.link"
@@ -131,7 +197,6 @@
     {
       "type": "select",
       "id": "image_ratio",
-      "label": "t:settings.aspect_ratio",
       "options": [
         {
           "value": "adapt",
@@ -150,7 +215,8 @@
           "label": "t:options.landscape"
         }
       ],
-      "default": "adapt"
+      "default": "adapt",
+      "label": "t:settings.aspect_ratio"
     },
     {
       "type": "select",
@@ -326,6 +392,46 @@
       "step": 1,
       "unit": "px",
       "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding-block-start-mobile",
+      "label": "Top Mobile",
+      "min": -1,
+      "max": 99,
+      "step": 1,
+      "unit": "px",
+      "default": -1
+    },
+    {
+      "type": "range",
+      "id": "padding-block-end-mobile",
+      "label": "Bottom Mobile",
+      "min": -1,
+      "max": 99,
+      "step": 1,
+      "unit": "px",
+      "default": -1
+    },
+    {
+      "type": "range",
+      "id": "padding-inline-start-mobile",
+      "label": "Left Mobile",
+      "min": -1,
+      "max": 99,
+      "step": 1,
+      "unit": "px",
+      "default": -1
+    },
+    {
+      "type": "range",
+      "id": "padding-inline-end-mobile",
+      "label": "Right Mobile",
+      "min": -1,
+      "max": 99,
+      "step": 1,
+      "unit": "px",
+      "default": -1
     }
   ],
   "presets": [
